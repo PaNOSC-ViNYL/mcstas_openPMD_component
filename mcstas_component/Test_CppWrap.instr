@@ -41,8 +41,8 @@ TRACE
 
 COMPONENT origin = Progress_bar()
 AT (0, 0, 0) RELATIVE ABSOLUTE
-
-COMPONENT Wrap = CppWrap(something="ciao")
+	//outfile defaults to the current component name
+	COMPONENT openPMD_out = CppWrap(outfile="") 
 AT (0, 0, 0) ABSOLUTE
 
 FINALLY

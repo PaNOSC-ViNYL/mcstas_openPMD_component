@@ -54,12 +54,10 @@ Finally [Test_CppWrap: Test_CppWrap_20171120_113035]. Time: 0 [s]
 mkdir build/
 cd build/
 cmake .. -DopenPMD_USE_PYTHON=OFF -DopenPMD_INSTALL=OFF -DopenPMD_USE_INTERNAL_CATCH=ON -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_CLI_TOOLS=OFF
-cmake --build .
-cd ..
-
 set -x LD_LIBRARY_PATH $PWD/build/lib/
+cmake --build . -- -j2; and ./bin/Test_CppWrap.out --no-output-files -n 10
 
-mcrun Test_CppWrap.instr saythis="HelloShervin"
+
 ```
 
 

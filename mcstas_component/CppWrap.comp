@@ -5,21 +5,21 @@
 *         Risoe National Laboratory, Roskilde, Denmark
 *         Institut Laue Langevin, Grenoble, France
 *
-* Component: CppWrap
+* Component: openPMD_io
 *
 * %I
 *
-* Written by: Peter Willendrup
-* Date: June 2017
-* Origin: DTU
+* Written by: Shervin Nourbakhsh
+* Date: July 2020
+* Origin: ILL
 *
-* Simple example of wrapping / calling a c++ library from McStas, Hello World style
+* 
 *
 * %D
-* Compile the enclosed snippets this way:
+* 
 *
-* g++ -fpic -shared hello.cpp -o libhello.so
-* g++ -fpic -shared hellowrap.cpp -L. -lhello -o libhellowrap.so
+* 
+* 
 *
 *
 * %P
@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 DEFINE COMPONENT CppWrap
-DEFINITION PARAMETERS (string something="ciao2", polarisationuse=0, doubleprec=0, verbose=0, int userflag=0)
+DEFINITION PARAMETERS (string outfile="ciao2", polarisationuse=0, doubleprec=0, verbose=0, int userflag=0)
 SETTING PARAMETERS (string filename=0, string userflagcomment="", merge_mpi=1, keep_mpi_unmerged=0)
 OUTPUT PARAMETERS (outputfile,particle,Particle, userflagenabled)
 DEPENDENCY "-L. -lhellowrap -Lbuild/lib/"
@@ -38,7 +38,7 @@ DEPENDENCY "-L. -lhellowrap -Lbuild/lib/"
 
 SHARE
 %{
-#include "hellowrap.h"
+#include "wrap.h"
   /* #include <mcpl.h> */
 /*   int mcpl_file_exist (char *filename) */
 /*   { */
@@ -59,12 +59,24 @@ DECLARE
 /* Neutron parameters: (x,y,z,vx,vy,vz,t,sx,sy,sz,p) */
 INITIALIZE
 %{
-
-  sayHi(something);
+	char _outfile_[100]; //to be fixed
   printf("Num particles: %d\n", mcget_ncount()); 
-  printf("[INITIALIZE] new openPMD_io\n");
-  op = newOpenPMD_io("test");
-  init(op, "json", 1, mcget_ncount());
+  printf("[INITIALIZE] new openPMD_write\n");
+  //if(strcmp(outfile,'\0'))
+  //sprintf(outfile, "%s", NAME_CURRENT_COMP);
+  printf("Current component: %s\n", NAME_CURRENT_COMP);
+  if(strlen(outfile)==0){
+	  sprintf(_outfile_, "%s", NAME_CURRENT_COMP);
+  }
+  printf("Output file: %s\n", _outfile_);
+  op = openPMD_write(_outfile_, // name of the output file
+		     MCCODE_NAME, 
+		     MCCODE_VERSION,
+		     mcinstrument_name,
+		     NAME_CURRENT_COMP);
+  // op, output format, , max number of neutrons
+  init(op, JSON, 1, mcget_ncount());  /* JSON or HDF5 */
+  printf("[INITIALIZE] Init done\n");
 %}
 
 TRACE
@@ -72,9 +84,11 @@ TRACE
   printf("[TRACE] trace particle\n");
   /* printf("Num particles: %u\n", num_particles()); */
   trace(op, x,y,z,
-	  sx,sy,sz,
-	  vx,vy,vz,
-	  t, p); //, userflag);
+  	  sx,sy,sz,
+  	  vx,vy,vz,
+  	  t, p); //, userflag);
+
+  SCATTER;
  
 %}
 
@@ -82,7 +96,17 @@ SAVE
 %{
   printf("[SAVE] \n");
   save(op);
- 
+
+/*   #ifdef USE_MPI */
+/*   if (merge_mpi && mpi_node_count > 1) { */
+/*     mcpl_close_outfile(outputfile); */
+/*   } else { */
+/*     mcpl_closeandgzip_outfile(outputfile); */
+/*   } */
+/* #else */
+/*   mcpl_closeandgzip_outfile(outputfile); */
+/* #endif */
+
   %}
 MCDISPLAY
 %{
