@@ -1,0 +1,96 @@
+/*******************************************************************************
+*
+* McStas, neutron ray-tracing package
+*         Copyright 1997-2002, All rights reserved
+*         Risoe National Laboratory, Roskilde, Denmark
+*         Institut Laue Langevin, Grenoble, France
+*
+* Component: CppWrap
+*
+* %I
+*
+* Written by: Peter Willendrup
+* Date: June 2017
+* Origin: DTU
+*
+* Simple example of wrapping / calling a c++ library from McStas, Hello World style
+*
+* %D
+* Compile the enclosed snippets this way:
+*
+* g++ -fpic -shared hello.cpp -o libhello.so
+* g++ -fpic -shared hellowrap.cpp -L. -lhello -o libhellowrap.so
+*
+*
+* %P
+* Input parameters:
+*
+* %E
+*******************************************************************************/
+
+DEFINE COMPONENT CppWrap
+DEFINITION PARAMETERS (string something="ciao2", polarisationuse=0, doubleprec=0, verbose=0, int userflag=0)
+SETTING PARAMETERS (string filename=0, string userflagcomment="", merge_mpi=1, keep_mpi_unmerged=0)
+OUTPUT PARAMETERS (outputfile,particle,Particle, userflagenabled)
+DEPENDENCY "-L. -lhellowrap -Lbuild/lib/"
+//DEPENDENCY "-I@MCCODE_LIB@/libs/mcpl -L@MCCODE_LIB@/libs/mcpl -lmcpl"
+
+
+SHARE
+%{
+#include "hellowrap.h"
+  /* #include <mcpl.h> */
+/*   int mcpl_file_exist (char *filename) */
+/*   { */
+/*     struct stat   buffer; */
+/*     return (stat (filename, &buffer) == 0); */
+/*   } */
+%}
+
+DECLARE
+%{
+  //  printf("[DECLARE] declaring openPMD_io\n");
+  openPMD_io *op = NULL;
+  //mcpl_outfile_t outputfile;
+  // mcpl_particle_t *particle,Particle;
+  // int userflagenabled;
+%}
+  
+/* Neutron parameters: (x,y,z,vx,vy,vz,t,sx,sy,sz,p) */
+INITIALIZE
+%{
+
+  sayHi(something);
+  printf("Num particles: %d\n", mcget_ncount()); 
+  printf("[INITIALIZE] new openPMD_io\n");
+  op = newOpenPMD_io("test");
+  init(op, "json", 1, mcget_ncount());
+%}
+
+TRACE
+%{
+  printf("[TRACE] trace particle\n");
+  /* printf("Num particles: %u\n", num_particles()); */
+  trace(op, x,y,z,
+	  sx,sy,sz,
+	  vx,vy,vz,
+	  t, p); //, userflag);
+ 
+%}
+
+SAVE
+%{
+  printf("[SAVE] \n");
+  save(op);
+ 
+  %}
+MCDISPLAY
+%{
+  /* A bit ugly; hard-coded dimensions. */
+  
+  line(0,0,0,0.2,0,0);
+  line(0,0,0,0,0.2,0);
+  line(0,0,0,0,0,0.2);
+%}
+
+END
