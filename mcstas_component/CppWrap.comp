@@ -75,13 +75,13 @@ INITIALIZE
 		     mcinstrument_name,
 		     NAME_CURRENT_COMP);
   // op, output format, , max number of neutrons
-  init(op, JSON, 1, mcget_ncount());  /* JSON or HDF5 */
+  init(op, HDF5, 1, mcget_ncount());  /* JSON or HDF5 */
   printf("[INITIALIZE] Init done\n");
 %}
 
 TRACE
 %{
-  printf("[TRACE] trace particle\n");
+  /*printf("[TRACE] trace particle\n");*/
   /* printf("Num particles: %u\n", num_particles()); */
   trace(op, x,y,z,
   	  sx,sy,sz,
