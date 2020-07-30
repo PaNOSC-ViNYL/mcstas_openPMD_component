@@ -10,6 +10,9 @@ This package provies a McStas component for reading and writing neutrons from/to
    - to be made configurable by the user
  - define the openPMD extension
  - conform to the extension
+ - add licence file
+ - add authors and commented header in all files
+ - put on github
  
 
 # Dependencies
