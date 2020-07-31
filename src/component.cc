@@ -109,7 +109,7 @@ void openPMD_io::init(openPMD_output_format_t extension, unsigned int iter,
 void openPMD_io::trace(double x, double y, double z, double sx, double sy, double sz, double vx, double vy,
 		       double vz, double t, double p) {
 	//_neutrons.emplace_back(particle(x, y, z, sx, sy, sz, vx, vy, vz, t, p));
-	_neutrons.add(x, y, z, sx, sy, sz, vx, vy, vz, t, p);
+	_neutrons.push_back(x, y, z, sx, sy, sz, vx, vy, vz, t, p);
 
 	if (_neutrons.size() >= CHUNK_SIZE)
 		save();
