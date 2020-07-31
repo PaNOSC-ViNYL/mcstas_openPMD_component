@@ -12,7 +12,7 @@ before_script:
   - mkdir -p build/
   - cd build/
 
-compile_api:
+compile:
   stage: build
   script:
     - cmake .. -DopenPMD_USE_PYTHON=OFF -DopenPMD_INSTALL=OFF -DopenPMD_USE_INTERNAL_CATCH=ON -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_CLI_TOOLS=ON
