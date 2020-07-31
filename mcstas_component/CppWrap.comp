@@ -75,7 +75,7 @@ INITIALIZE
 		     mcinstrument_name,
 		     NAME_CURRENT_COMP);
   // op, output format, , max number of neutrons
-  init(op, HDF5, 1, mcget_ncount());  /* JSON or HDF5 */
+  init(op, HDF5, mcget_ncount());  /* JSON or HDF5: enum*/
   printf("[INITIALIZE] Init done\n");
 %}
 

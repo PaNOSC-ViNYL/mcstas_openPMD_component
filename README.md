@@ -10,7 +10,7 @@ This package provies a McStas component for reading and writing neutrons from/to
    - to be made configurable by the user
  - define the openPMD extension
  - conform to the extension
- - add licence file
+ - add licence file: GPLv3? AGPL? EUPL v2?
  - add authors and commented header in all files
  - put on github
  
@@ -39,3 +39,9 @@ cd build/
 ctest --verbose
 ```
 
+# Structure of the repository
+ - `mcstas_component/` : contains an example instrument and the McStas component
+ - `include/`          : contains the public header files used by the component
+ - `src/`              : contains the implementation of the C wrapper, the definition and implementation of the C++ library that uses the openPMD API and auxiliary classes
+
+Check the wrap.h and wrap.cc dependency graph for more information.

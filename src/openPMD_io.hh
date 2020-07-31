@@ -1,9 +1,9 @@
 #ifndef MCSTAS_COMPONENT_BASE_HH
 #define MCSTAS_COMPONENT_BASE_HH
-
-#include "openpmd_output_formats.h"
-#include "particle.hh"
-#include <openPMD/openPMD.hpp>
+///\file
+#include "openpmd_output_formats.h" // enum with the available openPMD backends
+#include "particle.hh"              // helper class that stores the neutrons and returns 1D vectors
+#include <openPMD/openPMD.hpp>      // openPMD C++ API
 #include <string>
 
 #define ITER 1
@@ -13,28 +13,40 @@
  */
 class openPMD_io {
 public:
-	
-	explicit openPMD_io(const std::string& name, openPMD::Access read_mode, std::string mc_code_name = "",
-			    std::string mc_code_version = "", std::string instrument_name = "",
-			    std::string name_current_component = "");
+	///\brief constructor
+	explicit openPMD_io(const std::string& filename,             ///< filename
+			    openPMD::Access read_mode,               ///< file access mode (read/write/append)
+			    std::string mc_code_name           = "", ///< McStas code name
+			    std::string mc_code_version        = "", ///< McStas code version
+			    std::string instrument_name        = "", ///< McStas instrument name
+			    std::string name_current_component = ""  ///< name of the current component
+	);
 
-	/** initializes the "series" object from the openPMD API
-	 *  \todo extension as ENUM of the accepted formats
+	/// \brief initializes the "series" object from the openPMD API in WRITE MODE
+	void
+	init(openPMD_output_format_t output_format, ///< output format
+	     unsigned long long int n_neutrons,     ///< number of neutrons being simulated (max)
+	     unsigned int iter = 1                  ///< openPMD iteration, always using the default value
+	);
+
+	/** \brief save neutron properties in a vector
 	 *
-	 * \param[in] n_neutrons : number of neutrons to be simulated as
-	 * indicated on the command line of the McStas program */
-	void init(openPMD_output_format_t extension, unsigned int iter, unsigned long long int n_neutrons);
+	 * it writes to the file when the number of neutrons reaches CHUNK_SIZE as defined in the openPMD_io.cc file 
+	 * \param[in] x,y,z : neutron position          -> it is converted to cm ( * 100)
+	 * \param[in] sx, sy, sz : neutron polarization
+	 * \param[in] vx, vy, vz : neutron velocity     -> only the direction is stored
+	 * \param[in] t : time
+ 	 * \param[in] p : weight
+ 	 */
+	void
+	trace(double x, double y, double z,    // position
+	      double sx, double sy, double sz, // polarization
+	      double vx, double vy, double vz, // velocity
+	      double t, double p);
 
-	/** save neutron properties in a vector and dump it to the file in chunks */
-	void trace(double x, double y, double z,    //
-		   double sx, double sy, double sz, //
-		   double vx, double vy, double vz, //
-		   double t, double p);
-
-	/** flushes the output to file before closing it */
-	void save(void);
-
-	//  std::shared_ptr<std::vector<float> > x(void) const;
+	/** Flushes the output to file before closing it */
+	void
+	save(void);
 
 private:
 	std::string _name;
@@ -50,19 +62,25 @@ private:
 
 	static const std::map<openPMD_output_format_t, std::string> output_format_names;
 	/** declare the neutron particle species in the file */
-	void init_neutrons(unsigned int iter, unsigned long long int n_neutrons);
+	void
+	init_neutrons(unsigned int iter, unsigned long long int n_neutrons);
 
-	inline openPMD::Iteration& iter_pmd(void) { return _series->iterations[ITER]; }
+	inline openPMD::Iteration&
+	iter_pmd(void) {
+		return _series->iterations[ITER];
+	}
 
-	inline openPMD::ParticleSpecies& neutrons_pmd(void) {
+	inline openPMD::ParticleSpecies&
+	neutrons_pmd(void) {
 		auto i = iter_pmd();
 		return i.particles["neutron"];
 	}
 
-	void init_neutron_prop(
-	    std::string name, openPMD::Dataset& dataset, bool isScalar,
-	    std::map<openPMD::UnitDimension, double> const& dims = {{openPMD::UnitDimension::L, 0.}},
-	    double unitSI                                        = 0.);
+	void
+	init_neutron_prop(std::string name, openPMD::Dataset& dataset, bool isScalar,
+			  std::map<openPMD::UnitDimension, double> const& dims = {{openPMD::UnitDimension::L,
+										   0.}},
+			  double unitSI                                        = 0.);
 };
 
 #endif

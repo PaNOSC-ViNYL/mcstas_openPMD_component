@@ -1,13 +1,17 @@
 #include "openPMD_io.hh"
 #include <iostream>
+///\file
 
-/** \todo ekin should be saved according to the openPMD standard */
-/** \todo use particlePatches ... but I don't understand if/how */
-/** \todo
- * The CHUNK_SIZE should not be hardcoded
+/** \brief defines the maximum number of neutrons that can be stored in memory before dumping to file 
+ *\todo The CHUNK_SIZE should not be hardcoded
  * it should also be optimized with tests
  */
 #define CHUNK_SIZE 10000
+
+
+/** \todo ekin should be saved according to the openPMD standard */
+/** \todo use particlePatches ... but I don't understand if/how */
+
 //------------------------------------------------------------
 const std::map<openPMD_output_format_t, std::string> openPMD_io::output_format_names = {
     {JSON, "json"},
@@ -17,10 +21,14 @@ const std::map<openPMD_output_format_t, std::string> openPMD_io::output_format_n
 //------------------------------------------------------------
 openPMD_io::openPMD_io(const std::string& filename, openPMD::Access read_mode, std::string mc_code_name,
 		       std::string mc_code_version, std::string instrument_name,
-		       std::string name_current_component)
-    : _name(filename), _mc_code_name(mc_code_name), _mc_code_version(mc_code_version),
-      _instrument_name(instrument_name), _name_current_component(name_current_component),
-      _access_mode(read_mode), _series(nullptr){};
+		       std::string name_current_component):
+    _name(filename),
+    _mc_code_name(mc_code_name),
+    _mc_code_version(mc_code_version),
+    _instrument_name(instrument_name),
+    _name_current_component(name_current_component),
+    _access_mode(read_mode),
+    _series(nullptr){};
 
 //------------------------------------------------------------
 /** \brief
@@ -28,8 +36,9 @@ openPMD_io::openPMD_io(const std::string& filename, openPMD::Access read_mode, s
  * \param[in] isScalar : bool indicating if it is scalar
  * \param[in] dims : Unit dimensions
  */
-void openPMD_io::init_neutron_prop(std::string name, openPMD::Dataset& dataset, bool isScalar,
-				   std::map<openPMD::UnitDimension, double> const& dims, double unitSI) {
+void
+openPMD_io::init_neutron_prop(std::string name, openPMD::Dataset& dataset, bool isScalar,
+			      std::map<openPMD::UnitDimension, double> const& dims, double unitSI) {
 	auto neutrons = neutrons_pmd();
 
 	neutrons[name].setUnitDimension(dims);
@@ -49,7 +58,8 @@ void openPMD_io::init_neutron_prop(std::string name, openPMD::Dataset& dataset, 
 //------------------------------------------------------------
 /** n_neutrons is the ncount of McStas, so the number of neutrons to be
  * simulated */
-void openPMD_io::init_neutrons(unsigned int iter, unsigned long long int n_neutrons) {
+void
+openPMD_io::init_neutrons(unsigned int iter, unsigned long long int n_neutrons) {
 
 	// auto i = iter_pmd();
 	// series.setAttribute("dinner", "Pizza and Coke");
@@ -80,8 +90,8 @@ void openPMD_io::init_neutrons(unsigned int iter, unsigned long long int n_neutr
 			  1.6021766e-13); // MeV
 }
 
-void openPMD_io::init(openPMD_output_format_t extension, unsigned int iter,
-		      unsigned long long int n_neutrons) {
+void
+openPMD_io::init(openPMD_output_format_t extension, unsigned long long int n_neutrons, unsigned int iter) {
 	std::string filename = _name;
 	std::string a        = output_format_names.find(extension)->second;
 	filename += std::string(".") + a;
@@ -106,8 +116,9 @@ void openPMD_io::init(openPMD_output_format_t extension, unsigned int iter,
 }
 
 //------------------------------------------------------------
-void openPMD_io::trace(double x, double y, double z, double sx, double sy, double sz, double vx, double vy,
-		       double vz, double t, double p) {
+void
+openPMD_io::trace(double x, double y, double z, double sx, double sy, double sz, double vx, double vy,
+		  double vz, double t, double p) {
 	//_neutrons.emplace_back(particle(x, y, z, sx, sy, sz, vx, vy, vz, t, p));
 	_neutrons.push_back(x, y, z, sx, sy, sz, vx, vy, vz, t, p);
 
@@ -116,7 +127,8 @@ void openPMD_io::trace(double x, double y, double z, double sx, double sy, doubl
 };
 
 //------------------------------------------------------------
-void openPMD_io::save(void) {
+void
+openPMD_io::save(void) {
 	if (_neutrons.size() == 0)
 		return;
 #ifdef DEBUG
@@ -137,7 +149,7 @@ void openPMD_io::save(void) {
 	neutrons["time"][openPMD::RecordComponent::SCALAR].storeChunk(openPMD::shareRaw(_neutrons.time()),
 								      offset, extent);
 	neutrons["energy"][openPMD::RecordComponent::SCALAR].storeChunk(openPMD::shareRaw(_neutrons.ekin()),
-								      offset, extent);
+									offset, extent);
 	neutrons["weight"][openPMD::RecordComponent::SCALAR].storeChunk(openPMD::shareRaw(_neutrons.weight()),
 									offset, extent);
 

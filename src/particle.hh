@@ -1,6 +1,6 @@
 #ifndef PARTICLE_CLASS_HH
 #define PARTICLE_CLASS_HH
-
+///\file
 #include <vector>
 
 /** \class particles

@@ -20,3 +20,16 @@ AlwaysBreakAfterReturnType: None
 SortIncludes: false
 
 
+AlwaysBreakAfterReturnType: All
+BreakConstructorInitializers: AfterColon
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ReflowComments: false
+SpaceBeforeCtorInitializerColon: false
+
+AlignEscapedNewlines: Left
+
+
+# Comments
+#SpacesBeforeTrailingComments: 2
+AlignTrailingComments: true
+ReflowComments: false
