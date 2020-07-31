@@ -1,0 +1,35 @@
+image: gcc
+variables:
+  GIT_SUBMODULE_STRATEGY: normal
+  
+stages:
+  - build
+  - doc
+  - test
+
+before_script:
+  - git status
+  - mkdir -p build/
+  - cd build/
+
+compile_api:
+  stage: build
+  script:
+    - cmake .. -DopenPMD_USE_PYTHON=OFF -DopenPMD_INSTALL=OFF -DopenPMD_USE_INTERNAL_CATCH=ON -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_CLI_TOOLS=ON
+    - cmake --build .
+
+test:
+  stage: test
+  script:
+   - ctest --verbose -R mid
+   
+pages:
+  stage: doc
+  script:
+    - cmake --build . --target doc
+    - mv doc/html/ ../public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
