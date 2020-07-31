@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include "component.hh"
+#include "openPMD_io.hh"
 #include "wrap.h"
 
 #ifdef __cplusplus

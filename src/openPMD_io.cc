@@ -1,4 +1,4 @@
-#include "component.hh"
+#include "openPMD_io.hh"
 #include <iostream>
 
 /** \todo ekin should be saved according to the openPMD standard */
