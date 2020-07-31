@@ -15,6 +15,10 @@ before_script:
 compile:
   stage: build
   script:
+    - cd ..
+    - cd openPMD_api
+    - patch -p1 < ../cmake_api.patch
+    - cd ../build/
     - cmake .. -DopenPMD_USE_PYTHON=OFF -DopenPMD_INSTALL=OFF -DopenPMD_USE_INTERNAL_CATCH=ON -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_CLI_TOOLS=ON
     - cmake --build .
 
