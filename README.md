@@ -19,6 +19,17 @@ This package provies a McStas component for reading and writing neutrons from/to
  - cmake 3.7.2
  - openPMD C++ API
 
+### Ubuntu 18
+You need a more recent version of CMake
+```
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates gnupg software-properties-common wget
+
+wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
+
+sudo apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
+sudo apt-get update
+```
 
 # How to compile
 The openPMD API is compiled from source.
