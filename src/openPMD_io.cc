@@ -91,7 +91,7 @@ openPMD_io::init_neutrons(unsigned int iter, unsigned long long int n_neutrons) 
 }
 
 void
-openPMD_io::init(openPMD_output_format_t extension, unsigned long long int n_neutrons, unsigned int iter) {
+openPMD_io::init_write(openPMD_output_format_t extension, unsigned long long int n_neutrons, unsigned int iter) {
 	std::string filename = _name;
 	std::string a        = output_format_names.find(extension)->second;
 	filename += std::string(".") + a;
@@ -117,18 +117,18 @@ openPMD_io::init(openPMD_output_format_t extension, unsigned long long int n_neu
 
 //------------------------------------------------------------
 void
-openPMD_io::trace(double x, double y, double z, double sx, double sy, double sz, double vx, double vy,
+openPMD_io::trace_write(double x, double y, double z, double sx, double sy, double sz, double vx, double vy,
 		  double vz, double t, double p) {
 	//_neutrons.emplace_back(particle(x, y, z, sx, sy, sz, vx, vy, vz, t, p));
 	_neutrons.push_back(x, y, z, sx, sy, sz, vx, vy, vz, t, p);
 
 	if (_neutrons.size() >= CHUNK_SIZE)
-		save();
-};
+		save_write();
+}
 
 //------------------------------------------------------------
 void
-openPMD_io::save(void) {
+openPMD_io::save_write(void) {
 	if (_neutrons.size() == 0)
 		return;
 #ifdef DEBUG
@@ -156,3 +156,57 @@ openPMD_io::save(void) {
 	_series->flush(); // this crashes
 	_neutrons.clear();
 }
+
+void
+openPMD_io::init_read(openPMD_output_format_t extension, unsigned long long int n_neutrons, unsigned int iter) {
+    std::cout << "In init_read" << std::endl;
+
+    std::cout << "_name = " << _name << std::endl;
+    std::cout << "_output_format_names.find(extension)->second = " << output_format_names.find(extension)->second << std::endl;
+    
+    
+
+    std::string filename = _name;
+    std::string a        = output_format_names.find(extension)->second;
+    filename += std::string(".") + a;
+
+    std::cout << "Filename made" << std::endl;
+
+    // assign the global variable to keep track of it
+    //_series = std::unique_ptr<openPMD::Series>(new openPMD::Series(filename, openPMD::Access::READ_ONLY));
+    _series = std::unique_ptr<openPMD::Series>(new openPMD::Series(filename, openPMD::Access::CREATE));
+
+    if( _series->containsAttribute("author") )
+    std::cout << "Author  : " << _series->author() << std::endl;
+    
+    std::cout << "Filename: " << filename << std::endl; // remove
+
+    // from the series grab the iteration, from the iteration grab the record for neutrons
+    //auto neutrons = neutrons_pmd();
+    
+    
+    
+    
+    //init_neutrons(iter, n_neutrons);
+
+    // openPMD::Record mass = neutrons["mass"];
+    // openPMD::RecordComponent mass_scalar =
+    // mass[openPMD::RecordComponent::SCALAR];
+
+    // mass_scalar.resetDataset(dataset);
+
+    _series->flush();
+}
+
+//------------------------------------------------------------
+void
+openPMD_io::trace_read(double *x, double *y, double *z, double *sx, double *sy, double *sz, double *vx, double *vy,
+          double *vz, double *t, double *p) {
+    //_neutrons.emplace_back(particle(x, y, z, sx, sy, sz, vx, vy, vz, t, p));
+    //_neutrons.push_back(x, y, z, sx, sy, sz, vx, vy, vz, t, p);
+
+    std::cout << "In trace read" << std::endl;
+    //if (_neutrons.size() >= CHUNK_SIZE)
+    //    save_write();
+};
+

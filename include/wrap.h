@@ -14,8 +14,6 @@ extern "C" {
 typedef struct openPMD_io openPMD_io;
 /** declare an openPMD_io struct, defined from the openPMD_io class, with
  * default parameters to read from openPMD file */
-openPMD_io*
-openPMD_read(const char* name);
 
 /** declare an openPMD_io struct, with default parameters to write to openPMD
  * file */
@@ -23,18 +21,35 @@ openPMD_io*
 openPMD_write(const char* filename, const char* mc_code_name, const char* mc_code_version,
 	      const char* instrument_name, const char* name_current_component);
 
+/** declare an openPMD_io struct, with default parameters to read from openPMD
+ * file */
+openPMD_io*
+openPMD_read(const char* filename, const char* mc_code_name, const char* mc_code_version,
+          const char* instrument_name, const char* name_current_component);
+
 /* openPMD_io *openPMD_append(const char *name); */
 
-/** wrapper of openPMD_io::init() method */
+/** wrapper of openPMD_io::init_write() method */
 void
-init(openPMD_io* op, enum openPMD_output_format_t extension, unsigned long long int n_neutrons
+init_write(openPMD_io* op, enum openPMD_output_format_t extension, unsigned long long int n_neutrons
      //, unsigned int iter
 );
 
-/** wrapper of openPMD_io::trace() */
+/** wrapper of openPMD_io::trace_write() */
 void
-trace(openPMD_io* op, double x, double y, double z, double sx, double sy, double sz, double vx, double vy,
+trace_write(openPMD_io* op, double x, double y, double z, double sx, double sy, double sz, double vx, double vy,
       double vz, double t, double p);
+    
+/** wrapper of openPMD_io::init_read() method */
+void
+init_read(openPMD_io* op, enum openPMD_output_format_t extension, unsigned long long int n_neutrons
+     //, unsigned int iter
+);
+
+/** wrapper of openPMD_io::trace_read() */
+void
+trace_read(openPMD_io* op, double *x, double *y, double *z, double *sx, double *sy, double *sz, double *vx, double *vy,
+      double *vz, double *t, double *p);
 
 /** wrapper of openPMD_io::save() */
 void

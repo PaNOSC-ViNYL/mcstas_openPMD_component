@@ -35,9 +35,21 @@ add_custom_command(OUTPUT Test_CppWrap.c
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   )
 
+add_custom_command(OUTPUT Test_read_openPMD.c
+  DEPENDS mcstas_component/Test_read_openPMD.instr
+  DEPENDS mcstas_component/read_openPMD.comp
+  COMMENT "creation of Test_read_openPMD.c"
+  COMMAND mcstas -t -o ${CMAKE_BINARY_DIR}/Test_read_openPMD.c ${CMAKE_CURRENT_SOURCE_DIR}/mcstas_component/Test_read_openPMD.instr -Imcstas_component/
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  )
+
 add_executable(Test_CppWrap.out Test_CppWrap.c)
 target_link_libraries(Test_CppWrap.out PRIVATE wrap)
 target_link_libraries(Test_CppWrap.out PRIVATE m)
+
+add_executable(Test_read_openPMD.out Test_read_openPMD.c)
+target_link_libraries(Test_read_openPMD.out PRIVATE wrap)
+target_link_libraries(Test_read_openPMD.out PRIVATE m)
 
 enable_testing()
 add_test(NAME short COMMAND Test_CppWrap.out -n 10 --exe $<TARGET_FILE:Test_CppWrap.out>

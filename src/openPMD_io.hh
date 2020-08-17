@@ -15,19 +15,26 @@ class openPMD_io {
 public:
 	///\brief constructor
 	explicit openPMD_io(const std::string& filename,             ///< filename
-			    openPMD::Access read_mode,               ///< file access mode (read/write/append)
-			    std::string mc_code_name           = "", ///< McStas code name
-			    std::string mc_code_version        = "", ///< McStas code version
-			    std::string instrument_name        = "", ///< McStas instrument name
-			    std::string name_current_component = ""  ///< name of the current component
+			            openPMD::Access read_mode,               ///< file access mode (read/write/append)
+			            std::string mc_code_name           = "", ///< McStas code name
+			            std::string mc_code_version        = "", ///< McStas code version
+                        std::string instrument_name        = "", ///< McStas instrument name
+			            std::string name_current_component = ""  ///< name of the current component
 	);
 
 	/// \brief initializes the "series" object from the openPMD API in WRITE MODE
 	void
-	init(openPMD_output_format_t output_format, ///< output format
-	     unsigned long long int n_neutrons,     ///< number of neutrons being simulated (max)
-	     unsigned int iter = 1                  ///< openPMD iteration, always using the default value
+	init_write(openPMD_output_format_t output_format, ///< output format
+	           unsigned long long int n_neutrons,     ///< number of neutrons being simulated (max)
+         	   unsigned int iter = 1                  ///< openPMD iteration, always using the default value
 	);
+ 
+    /// \brief initializes the "series" object from the openPMD API in READ MODE
+    void
+    init_read(openPMD_output_format_t output_format, ///< output format
+              unsigned long long int n_neutrons,     ///< number of neutrons being simulated (max)
+              unsigned int iter = 1                  ///< openPMD iteration, always using the default value
+    );
 
 	/** \brief save neutron properties in a vector
 	 *
@@ -39,14 +46,20 @@ public:
  	 * \param[in] p : weight
  	 */
 	void
-	trace(double x, double y, double z,    // position
-	      double sx, double sy, double sz, // polarization
-	      double vx, double vy, double vz, // velocity
-	      double t, double p);
+	trace_write(double x, double y, double z,    // position
+	            double sx, double sy, double sz, // polarization
+	            double vx, double vy, double vz, // velocity
+	            double t, double p);
+    
+    void
+    trace_read(double *x, double *y, double *z,    // position
+               double *sx, double *sy, double *sz, // polarization
+               double *vx, double *vy, double *vz, // velocity
+               double *t, double *p);
 
 	/** Flushes the output to file before closing it */
 	void
-	save(void);
+	save_write(void);
 
 private:
 	std::string _name;
