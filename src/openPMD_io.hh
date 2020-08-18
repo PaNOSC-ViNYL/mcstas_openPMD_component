@@ -51,6 +51,15 @@ public:
 	            double vx, double vy, double vz, // velocity
 	            double t, double p);
     
+    /** \brief save neutron properties in a vector
+     *
+     * Reads neutron data from particle instance in format useful for McStas
+     * \param[out] x,y,z : neutron position in m
+     * \param[out] sx, sy, sz : neutron polarization (not working yet)
+     * \param[out] vx, vy, vz : neutron velocity m/s
+     * \param[out] t : time [s]
+     * \param[out] p : weight
+     */
     void
     trace_read(double *x, double *y, double *z,    // position
                double *sx, double *sy, double *sz, // polarization

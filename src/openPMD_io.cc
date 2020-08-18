@@ -154,7 +154,8 @@ openPMD_io::save_write(void) {
 									offset, extent);
 
 	_series->flush(); // this crashes
-	_neutrons.clear();
+    _neutrons.clear();
+	
 }
 
 void

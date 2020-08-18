@@ -31,13 +31,28 @@ public:
 		           double sx, double sy, double sz, // polarization
 		           double vx, double vy, double vz, // velocity
 		           double t, double p);             // time and weight //, uint32_t userflag = 0);
-
+    
+    /** \brief append a new neutron from openPMD data
+     * \param[in] x,y,z : neutron position in cm
+     * \param[in] sx, sy, sz : neutron polarization (not working yet)
+     * \param[in] vx, vy, vz : neutron direction
+     * \param[in] t : time in ms
+     * \param[in] p : weight
+     * \param[in] ekin : kinetic energy
+     */
     void store(double x, double y, double z,    //  position
                double sx, double sy, double sz, //  polarization
                double dx, double dy, double dz, //  velocity
                double time, double weight,      //  time and weight
                double ekin);                    //  kinetic energy
 
+    /** \brief read a new neutron from openPMD data
+     * \param[out] x,y,z : neutron position in m
+     * \param[out] sx, sy, sz : neutron polarization (not working yet)
+     * \param[out] vx, vy, vz : neutron velocity in m/s
+     * \param[out] t : time in s
+     * \param[out] p : weight
+     */
     void retrieve(double *x, double *y, double *z,    //  position
                   double *sx, double *sy, double *sz, // polarization
                   double *vx, double *vy, double *vz, // velocity

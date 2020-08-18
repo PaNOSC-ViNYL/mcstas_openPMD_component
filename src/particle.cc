@@ -78,7 +78,7 @@ void particles::retrieve(double *x, double *y, double *z,
     *y = _y[_read]/100;
     *z = _z[_read]/100;
     
-    // Polarization is in the correct format
+    // Polarization is in the correct format (not written by write component yet)
     *sx = _sx[_read];
     *sy = _sy[_read];
     *sz = _sz[_read];
