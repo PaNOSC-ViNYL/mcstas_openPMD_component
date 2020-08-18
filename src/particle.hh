@@ -14,6 +14,7 @@ private:
 	    _abs_v, _time, _weight, _ekin; // velocity, time, weight, kinetic energy
 	//	std::vector<uint32_t> _userflag;
 	size_t _size; // number of stored neutrons
+    unsigned long int _read; // current index when reading
 
 public:
 	/// \brief default constructor
@@ -27,13 +28,25 @@ public:
 	 * \param[in] p : weight
 	 */
 	void push_back(double x, double y, double z,    //  position
-		       double sx, double sy, double sz, // polarization
-		       double vx, double vy, double vz, // velocity
-		       double t, double p);             // time and weight //, uint32_t userflag = 0);
+		           double sx, double sy, double sz, // polarization
+		           double vx, double vy, double vz, // velocity
+		           double t, double p);             // time and weight //, uint32_t userflag = 0);
 
+    void store(double x, double y, double z,    //  position
+               double sx, double sy, double sz, //  polarization
+               double dx, double dy, double dz, //  velocity
+               double time, double weight,      //  time and weight
+               double ekin);                    //  kinetic energy
+
+    void retrieve(double *x, double *y, double *z,    //  position
+                  double *sx, double *sy, double *sz, // polarization
+                  double *vx, double *vy, double *vz, // velocity
+                  double *t, double *p);              // time and weight //, uint32_t userflag = 0);)
+    
 	/** \brief reset the container, removing all the neutrons */
 	void clear(void) {
 		_size = 0;
+        _read = 0;
 		_x.clear();
 		_y.clear();
 		_z.clear();

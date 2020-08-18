@@ -17,7 +17,7 @@ openPMD_write(const char* filename, const char* mc_code_name, const char* mc_cod
 openPMD_io*
 openPMD_read(const char* filename, const char* mc_code_name, const char* mc_code_version,
           const char* instrument_name, const char* name_current_component) {
-    return new openPMD_io(filename, openPMD::Access::CREATE, mc_code_name, mc_code_version,
+    return new openPMD_io(filename, openPMD::Access::READ_ONLY, mc_code_name, mc_code_version,
                   instrument_name, name_current_component);
 }
 

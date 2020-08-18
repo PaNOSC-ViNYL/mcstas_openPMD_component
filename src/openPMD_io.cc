@@ -159,54 +159,75 @@ openPMD_io::save_write(void) {
 
 void
 openPMD_io::init_read(openPMD_output_format_t extension, unsigned long long int n_neutrons, unsigned int iter) {
-    std::cout << "In init_read" << std::endl;
-
-    std::cout << "_name = " << _name << std::endl;
-    std::cout << "_output_format_names.find(extension)->second = " << output_format_names.find(extension)->second << std::endl;
-    
-    
-
     std::string filename = _name;
-    std::string a        = output_format_names.find(extension)->second;
-    filename += std::string(".") + a;
-
-    std::cout << "Filename made" << std::endl;
 
     // assign the global variable to keep track of it
-    //_series = std::unique_ptr<openPMD::Series>(new openPMD::Series(filename, openPMD::Access::READ_ONLY));
-    _series = std::unique_ptr<openPMD::Series>(new openPMD::Series(filename, openPMD::Access::CREATE));
+    _series = std::unique_ptr<openPMD::Series>(new openPMD::Series(filename, openPMD::Access::READ_ONLY));
 
     if( _series->containsAttribute("author") )
     std::cout << "Author  : " << _series->author() << std::endl;
     
-    std::cout << "Filename: " << filename << std::endl; // remove
-
-    // from the series grab the iteration, from the iteration grab the record for neutrons
-    //auto neutrons = neutrons_pmd();
+    std::cout << "Filename: " << filename << std::endl;
     
+    // Need to find a way to check the number of iterations, needs to be 1, otherwise file is broken / empty
     
+    auto our_data = _series->iterations[1];
+    auto neutron_data = our_data.particles["neutron"];
     
+    std::cout << "Made neutron_data: " << std::endl;
     
-    //init_neutrons(iter, n_neutrons);
-
-    // openPMD::Record mass = neutrons["mass"];
-    // openPMD::RecordComponent mass_scalar =
-    // mass[openPMD::RecordComponent::SCALAR];
-
-    // mass_scalar.resetDataset(dataset);
-
+    auto x_dat = neutron_data["position"]["x"];
+    auto y_dat = neutron_data["position"]["y"];
+    auto z_dat = neutron_data["position"]["z"];
+    auto dx_dat = neutron_data["direction"]["x"];
+    auto dy_dat = neutron_data["direction"]["y"];
+    auto dz_dat = neutron_data["direction"]["z"];
+    
+    auto time_dat = neutron_data["time"][openPMD::RecordComponent::SCALAR];
+    auto energy_dat = neutron_data["energy"][openPMD::RecordComponent::SCALAR];
+    auto weight_dat = neutron_data["weight"][openPMD::RecordComponent::SCALAR];
+    
+    // Assume all have same length
+    openPMD::Extent x_extent = x_dat.getExtent();
+    
+    std::cout << "x_dat has shape (";
+    for( auto const& dim : x_extent )
+        std::cout << dim << ',';
+    std::cout << ") and has datatype " << x_dat.getDatatype() << std::endl;
+    
+    auto all_x_data = x_dat.loadChunk<float>();
+    auto all_y_data = y_dat.loadChunk<float>();
+    auto all_z_data = z_dat.loadChunk<float>();
+    
+    auto all_dx_data = dx_dat.loadChunk<float>();
+    auto all_dy_data = dy_dat.loadChunk<float>();
+    auto all_dz_data = dz_dat.loadChunk<float>();
+    
+    auto time_data = time_dat.loadChunk<float>();
+    auto energy_data = energy_dat.loadChunk<float>();
+    auto weight_data = weight_dat.loadChunk<float>();
+    
     _series->flush();
+    
+    _neutrons.clear(); // Necessary to set _read to zero
+
+    // Store openPMD data in neutrons particles instance
+    for (size_t index=0; index<x_extent[0]; index++) {
+      _neutrons.store(all_x_data.get()[index], all_y_data.get()[index], all_z_data.get()[index],
+                      all_dx_data.get()[index], all_dy_data.get()[index], all_dz_data.get()[index],
+                      all_dx_data.get()[index], all_dy_data.get()[index], all_dz_data.get()[index],
+                      time_data.get()[index], weight_data.get()[index], energy_data.get()[index]);
+    }
+    
 }
 
 //------------------------------------------------------------
 void
 openPMD_io::trace_read(double *x, double *y, double *z, double *sx, double *sy, double *sz, double *vx, double *vy,
           double *vz, double *t, double *p) {
-    //_neutrons.emplace_back(particle(x, y, z, sx, sy, sz, vx, vy, vz, t, p));
-    //_neutrons.push_back(x, y, z, sx, sy, sz, vx, vy, vz, t, p);
-
-    std::cout << "In trace read" << std::endl;
-    //if (_neutrons.size() >= CHUNK_SIZE)
-    //    save_write();
+    
+    // Get neutron state from neutrons particle instance
+    _neutrons.retrieve(x, y, z, sx, sy, sz, vx, vy, vz, t, p); // Will loop internally if more than data size is read
+    
 };
 

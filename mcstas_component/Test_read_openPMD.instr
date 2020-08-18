@@ -43,8 +43,25 @@ COMPONENT origin = Progress_bar()
 AT (0, 0, 0) RELATIVE ABSOLUTE
 
 //outfile defaults to the current component name
-COMPONENT openPMD_out = read_openPMD(outfile="")
+COMPONENT openPMD_out = read_openPMD(input="openPMD_out.h5")
 AT (0, 0, 0) ABSOLUTE
+EXTEND %{
+/*
+printf("x,y,z = %f, %f, %f \n", x,y,z);
+printf("vx,vy,vz = %f, %f, %f \n", vx,vy,vz);
+printf("p, t = %f, %f \n", p,t);
+*/
+
+%}
+
+COMPONENT PSD = PSD_monitor(xwidth=0.3, yheight=0.3, filename="psd_first.dat", restore_neutron=1)
+AT (0, 0, 1.01) RELATIVE openPMD_out
+
+COMPONENT PSD2 = PSD_monitor(xwidth=1.0, yheight=1.0, filename="psd_last.dat", restore_neutron=1)
+AT (0, 0, 2.0) RELATIVE openPMD_out
+
+COMPONENT E_mon = E_monitor(xwidth=1.0, yheight=1.0, filename="E_mon.dat", restore_neutron=1, Emin=0, Emax=50)
+AT (0, 0, 2.0) RELATIVE openPMD_out
 
 FINALLY
 %{

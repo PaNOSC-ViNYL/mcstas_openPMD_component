@@ -41,9 +41,21 @@ TRACE
 
 COMPONENT origin = Progress_bar()
 AT (0, 0, 0) RELATIVE ABSOLUTE
-	//outfile defaults to the current component name
-	COMPONENT openPMD_out = CppWrap(outfile="") 
-AT (0, 0, 0) ABSOLUTE
+
+COMPONENT source = Source_simple(
+    xwidth=0.1,
+    yheight=0.05,
+    E0=25, dE=10,
+    dist=1, focus_xw=0.05, focus_yh=0.1)
+AT (0, 0, 0) RELATIVE origin
+
+// Wish to propagate 1 m to get non zero z / t
+COMPONENT prop = Slit(xwidth=1.0, yheight=1.0)
+AT (0, 0, 1.0) RELATIVE source
+
+//outfile defaults to the current component name
+COMPONENT openPMD_out = CppWrap(outfile="")
+AT (0, 0, 0) RELATIVE ABSOLUTE
 
 FINALLY
 %{
