@@ -71,7 +71,7 @@ INITIALIZE
 		            MCCODE_VERSION,
 		            mcinstrument_name,
 		            NAME_CURRENT_COMP);
-  printf("Cleared openPMD_read\n");
+    
   // op, output format, , max number of neutrons
   init_read(op, HDF5, mcget_ncount());  /* JSON or HDF5: enum*/
   printf("[INITIALIZE] Init done\n");
