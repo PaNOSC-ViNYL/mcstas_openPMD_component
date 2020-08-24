@@ -2,17 +2,17 @@
 This package provies a McStas component for reading and writing neutrons from/to a file on disk.
 
 # To do
- - complete the writing
- - implement the reading
- - add possibility to decide the file format (now hardcoded as HDF5)
- - neutrons are saved in chunks, the chunk size is hardcoded
+ * [ ] complete the writing
+ * [X] implement the reading
+ * [ ] add possibility to decide the file format (now hardcoded as HDF5)
+ * [ ] neutrons are saved in chunks, the chunk size is hardcoded
    - to be optimized
    - to be made configurable by the user
- - define the openPMD extension
- - conform to the extension
- - add licence file: GPLv3? AGPL? EUPL v2?
- - add authors and commented header in all files
- - put on github
+ * [ ] define the openPMD extension
+ * [ ] conform to the extension
+ * [ ] add licence file: GPLv3? AGPL? EUPL v2?
+ * [ ] add authors and commented header in all files
+ * [ ] put on github
  
 
 # Dependencies
