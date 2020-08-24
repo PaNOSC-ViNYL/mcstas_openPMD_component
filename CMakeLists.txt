@@ -52,13 +52,16 @@ target_link_libraries(Test_read_openPMD.out PRIVATE wrap)
 target_link_libraries(Test_read_openPMD.out PRIVATE m)
 
 enable_testing()
-add_test(NAME short COMMAND Test_CppWrap.out -n 100 --exe $<TARGET_FILE:Test_CppWrap.out>
+add_test(NAME short COMMAND Test_CppWrap.out -n 100 -s 654321 --exe $<TARGET_FILE:Test_CppWrap.out>
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
-add_test(NAME mid COMMAND Test_CppWrap.out -n 1e6 --exe $<TARGET_FILE:Test_CppWrap.out>
+add_test(NAME mid COMMAND Test_CppWrap.out -n 1e6  -s 654321 --exe $<TARGET_FILE:Test_CppWrap.out>
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
-add_test(NAME long COMMAND Test_CppWrap.out -n 1e8 --exe $<TARGET_FILE:Test_CppWrap.out>
+add_test(NAME long COMMAND Test_CppWrap.out -n 1e8  -s 654321 --exe $<TARGET_FILE:Test_CppWrap.out>
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
+
+add_test(NAME read COMMAND Test_read_openPMD.out --exe $<TARGET_FILE:Test_read_openPMD.out>
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
 

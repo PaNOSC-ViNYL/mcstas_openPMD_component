@@ -54,7 +54,7 @@ COMPONENT prop = Slit(xwidth=1.0, yheight=1.0)
 AT (0, 0, 1.0) RELATIVE source
 
 //outfile defaults to the current component name
-COMPONENT openPMD_out = CppWrap(outfile="", useHDF=0)
+COMPONENT openPMD_out = CppWrap(outfile="", useHDF=1)
 AT (0, 0, 0) RELATIVE ABSOLUTE
 
 FINALLY
