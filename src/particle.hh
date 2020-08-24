@@ -13,8 +13,8 @@ private:
 	    _vx, _vy, _vz,                 // direction (vx^2+vy^2+vz^2) = 1
 	    _abs_v, _time, _weight, _ekin; // velocity, time, weight, kinetic energy
 	//	std::vector<uint32_t> _userflag;
-	size_t _size; // number of stored neutrons
-    unsigned long int _read; // current index when reading
+	size_t _size;            // number of stored neutrons
+	unsigned long int _read; // current index when reading
 
 public:
 	/// \brief default constructor
@@ -27,41 +27,45 @@ public:
 	 * \param[in] t : time
 	 * \param[in] p : weight
 	 */
-	void push_back(double x, double y, double z,    //  position
-		           double sx, double sy, double sz, // polarization
-		           double vx, double vy, double vz, // velocity
-		           double t, double p);             // time and weight //, uint32_t userflag = 0);
-    
-    /** \brief append a new neutron from openPMD data
+	void
+	push_back(double x, double y, double z,    // position
+	          double sx, double sy, double sz, // polarization
+	          double vx, double vy, double vz, // velocity
+	          double t, double p);             // time and weight //, uint32_t userflag = 0);
+
+	/** \brief append a new neutron from openPMD data
      * \param[in] x,y,z : neutron position in cm
      * \param[in] sx, sy, sz : neutron polarization (not working yet)
-     * \param[in] vx, vy, vz : neutron direction
-     * \param[in] t : time in ms
-     * \param[in] p : weight
+     * \param[in] dx, dy, dz : neutron direction
+     * \param[in] time : time in ms
+     * \param[in] weight : weight
      * \param[in] ekin : kinetic energy
      */
-    void store(double x, double y, double z,    //  position
-               double sx, double sy, double sz, //  polarization
-               double dx, double dy, double dz, //  velocity
-               double time, double weight,      //  time and weight
-               double ekin);                    //  kinetic energy
+	void
+	store(double x, double y, double z,    //  position
+	      double sx, double sy, double sz, //  polarization
+	      double dx, double dy, double dz, //  velocity
+	      double time, double weight,      //  time and weight
+	      double ekin);                    //  kinetic energy
 
-    /** \brief read a new neutron from openPMD data
+	/** \brief read a new neutron from openPMD data
      * \param[out] x,y,z : neutron position in m
      * \param[out] sx, sy, sz : neutron polarization (not working yet)
      * \param[out] vx, vy, vz : neutron velocity in m/s
      * \param[out] t : time in s
      * \param[out] p : weight
      */
-    void retrieve(double *x, double *y, double *z,    //  position
-                  double *sx, double *sy, double *sz, // polarization
-                  double *vx, double *vy, double *vz, // velocity
-                  double *t, double *p);              // time and weight //, uint32_t userflag = 0);)
-    
+	void
+	retrieve(double* x, double* y, double* z,    // position
+	         double* sx, double* sy, double* sz, // polarization
+	         double* vx, double* vy, double* vz, // velocity
+	         double* t, double* p);              // time and weight //, uint32_t userflag = 0);)
+
 	/** \brief reset the container, removing all the neutrons */
-	void clear(void) {
+	void
+	clear(void) {
 		_size = 0;
-        _read = 0;
+		_read = 0;
 		_x.clear();
 		_y.clear();
 		_z.clear();
@@ -77,7 +81,10 @@ public:
 	};
 
 	/** \brief returns the number of stored neutrons */
-	size_t size() const { return _size; };
+	size_t
+	size() const {
+		return _size;
+	};
 
 	// clang-format off
 	/** \name 1D vector quantities of stored neutrons
@@ -92,18 +99,54 @@ public:
  *
 	 */
 	// clang-format on
-	const std::vector<float>& x(void) const { return _x; };
-	const std::vector<float>& y(void) const { return _y; };
-	const std::vector<float>& z(void) const { return _z; };
-	const std::vector<float>& vx(void) const { return _vx; };
-	const std::vector<float>& vy(void) const { return _vy; };
-	const std::vector<float>& vz(void) const { return _vz; };
-	const std::vector<float>& sx(void) const { return _sx; };
-	const std::vector<float>& sy(void) const { return _sy; };
-	const std::vector<float>& sz(void) const { return _sz; };
-	const std::vector<float>& time(void) const { return _time; };
-	const std::vector<float>& ekin(void) const { return _ekin; };
-	const std::vector<float>& weight(void) const { return _weight; };
+	const std::vector<float>&
+	x(void) const {
+		return _x;
+	};
+	const std::vector<float>&
+	y(void) const {
+		return _y;
+	};
+	const std::vector<float>&
+	z(void) const {
+		return _z;
+	};
+	const std::vector<float>&
+	vx(void) const {
+		return _vx;
+	};
+	const std::vector<float>&
+	vy(void) const {
+		return _vy;
+	};
+	const std::vector<float>&
+	vz(void) const {
+		return _vz;
+	};
+	const std::vector<float>&
+	sx(void) const {
+		return _sx;
+	};
+	const std::vector<float>&
+	sy(void) const {
+		return _sy;
+	};
+	const std::vector<float>&
+	sz(void) const {
+		return _sz;
+	};
+	const std::vector<float>&
+	time(void) const {
+		return _time;
+	};
+	const std::vector<float>&
+	ekin(void) const {
+		return _ekin;
+	};
+	const std::vector<float>&
+	weight(void) const {
+		return _weight;
+	};
 	///@}
 };
 

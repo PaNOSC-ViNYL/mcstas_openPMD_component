@@ -5,11 +5,11 @@
 *         Risoe National Laboratory, Roskilde, Denmark
 *         Institut Laue Langevin, Grenoble, France
 *
-* Component: openPMD_io
+* Component: read_openPMD
 *
 * %I
 *
-* Written by: Shervin Nourbakhsh
+* Written by: Shervin Nourbakhsh (ILL) & Mads Bertelsen (ESS)
 * Date: July 2020
 * Origin: ILL
 *
@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 DEFINE COMPONENT read_openPMD
-DEFINITION PARAMETERS (string input, string outfile="ciao2", polarisationuse=0, doubleprec=0, verbose=0, int userflag=0)
+DEFINITION PARAMETERS (string input, polarisationuse=0, doubleprec=0, verbose=0, int userflag=0)
 SETTING PARAMETERS (string filename=0, string userflagcomment="", merge_mpi=1, keep_mpi_unmerged=0)
 OUTPUT PARAMETERS (outputfile,particle,Particle, userflagenabled)
 DEPENDENCY "-L. -lhellowrap -Lbuild/lib/"
@@ -71,7 +71,8 @@ INITIALIZE
 		            MCCODE_VERSION,
 		            mcinstrument_name,
 		            NAME_CURRENT_COMP);
-    
+
+  // the file format could be deduced from the file extension
   // op, output format, , max number of neutrons
   init_read(op, HDF5, mcget_ncount());  /* JSON or HDF5: enum*/
   printf("[INITIALIZE] Init done\n");

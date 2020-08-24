@@ -16,8 +16,16 @@ This package provies a McStas component for reading and writing neutrons from/to
  
 
 # Dependencies
- - cmake 3.7.2
+ - cmake 3.11.2
  - openPMD C++ API
+
+### CENTOS 8
+The CMake version needed for openPMD api, with the options reported in the following instructions, is less stringent than what is marked in the CMakeLists.txt and it is above the version available on CENTOS 8. So a patch is needed:
+```
+cd openPMD-api
+patch  -p1 < ../cmake_api.patch
+cd -
+```
 
 ### Ubuntu 18
 You need a more recent version of CMake

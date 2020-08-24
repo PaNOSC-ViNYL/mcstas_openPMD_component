@@ -1,6 +1,6 @@
 #ifndef OPENPMD_OUTPUT_FORMATS_H
 #define OPENPMD_OUTPUT_FORMATS_H
-/// \file 
+/// \file
 /** \enum openPMD_output_format_t 
  * \brief list of implemented openPMD backends/extensions 
 */

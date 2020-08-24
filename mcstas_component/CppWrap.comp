@@ -9,7 +9,7 @@
 *
 * %I
 *
-* Written by: Shervin Nourbakhsh
+* Written by: Shervin Nourbakhsh (ILL) & Mads Bertelsen (ESS)
 * Date: July 2020
 * Origin: ILL
 *
@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 DEFINE COMPONENT CppWrap
-DEFINITION PARAMETERS (string outfile="ciao2", polarisationuse=0, doubleprec=0, verbose=0, int userflag=0)
+DEFINITION PARAMETERS (string outfile="ciao2", useHDF=0, polarisationuse=0, doubleprec=0, verbose=0, int userflag=0)
 SETTING PARAMETERS (string filename=0, string userflagcomment="", merge_mpi=1, keep_mpi_unmerged=0)
 OUTPUT PARAMETERS (outputfile,particle,Particle, userflagenabled)
 DEPENDENCY "-L. -lhellowrap -Lbuild/lib/"
@@ -75,7 +75,7 @@ INITIALIZE
 		     mcinstrument_name,
 		     NAME_CURRENT_COMP);
   // op, output format, , max number of neutrons
-  init_write(op, HDF5, mcget_ncount());  /* JSON or HDF5: enum*/
+  init_write(op, (useHDF ? HDF5 : JSON), mcget_ncount());  /* JSON or HDF5: enum*/
   printf("[INITIALIZE] Init done\n");
 %}
 

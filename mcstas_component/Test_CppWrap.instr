@@ -2,12 +2,12 @@
 * Instrument: <instrument name>
 *
 * %I
-* Written by: Peter Willendrup
-* Date: June 2017
+* Written by: Shervin Nourbakhsh (ILL) and Mads Bertelsen (ESS)
+* Date: June 2020
 * Origin: DTU
 * %INSTRUMENT_SITE: Templates
 *
-* Simple test instument example of wrapping / calling a c++ library from McStas, Hello World style
+* Simple test instument
 *
 * %D
 * Compile the enclosed snippets this way:
@@ -54,7 +54,7 @@ COMPONENT prop = Slit(xwidth=1.0, yheight=1.0)
 AT (0, 0, 1.0) RELATIVE source
 
 //outfile defaults to the current component name
-COMPONENT openPMD_out = CppWrap(outfile="")
+COMPONENT openPMD_out = CppWrap(outfile="", useHDF=0)
 AT (0, 0, 0) RELATIVE ABSOLUTE
 
 FINALLY

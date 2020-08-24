@@ -1,7 +1,8 @@
 BasedOnStyle: LLVM
 IndentWidth: 8
 #UseTab: UT_AlignWithSpaces # available in release later than 9
-UseTab: ForContinuationAndIndentation
+#UseTab: ForContinuationAndIndentation
+UseTab: ForIndentation
 BreakBeforeBraces: Custom
 BraceWrapping:
 	AfterNamespace: false
@@ -21,10 +22,16 @@ SortIncludes: false
 
 
 AlwaysBreakAfterReturnType: All
+#AlwaysBreakAfterReturnType: TopLevel
 BreakConstructorInitializers: AfterColon
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
-ReflowComments: false
 SpaceBeforeCtorInitializerColon: false
+BinPackParameters: true
+BinPackArguments: true
+AllowAllArgumentsOnNextLine: true
+AllowShortBlocksOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+PenaltyReturnTypeOnItsOwnLine: 0
 
 AlignEscapedNewlines: Left
 
