@@ -12,8 +12,8 @@
 particles::particles(): _size(0) {}
 
 void
-particles::push_back(double x, double y, double z, double sx, double sy, double sz, double vx, double vy,
-                     double vz, double t,
+particles::push_back(double x, double y, double z, double sx, double sy, double sz, double vx,
+                     double vy, double vz, double t,
                      double p) { //, uint32_t userflag) {
 	double abs_v = sqrt(vx * vx + vy * vy + vz * vz);
 	double ekin  = VS2E * abs_v * abs_v / 1e9;
@@ -40,8 +40,8 @@ particles::push_back(double x, double y, double z, double sx, double sy, double 
 }
 
 void
-particles::store(double x, double y, double z, double sx, double sy, double sz, double dx, double dy,
-                 double dz, double time, double weight, double ekin) {
+particles::store(double x, double y, double z, double sx, double sy, double sz, double dx,
+                 double dy, double dz, double time, double weight, double ekin) {
 
 	_x.push_back(x);
 	_y.push_back(y);

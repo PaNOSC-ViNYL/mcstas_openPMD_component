@@ -8,10 +8,10 @@
  */
 class particles {
 private:
-	std::vector<float> _x, _y, _z,     // position
-	    _sx, _sy, _sz,                 // polarization
-	    _vx, _vy, _vz,                 // direction (vx^2+vy^2+vz^2) = 1
-	    _abs_v, _time, _weight, _ekin; // velocity, time, weight, kinetic energy
+	std::vector<float> _x, _y, _z,         // position
+	        _sx, _sy, _sz,                 // polarization
+	        _vx, _vy, _vz,                 // direction (vx^2+vy^2+vz^2) = 1
+	        _abs_v, _time, _weight, _ekin; // velocity, time, weight, kinetic energy
 	//	std::vector<uint32_t> _userflag;
 	size_t _size;            // number of stored neutrons
 	unsigned long int _read; // current index when reading

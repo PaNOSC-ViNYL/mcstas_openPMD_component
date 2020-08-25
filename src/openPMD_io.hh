@@ -15,12 +15,12 @@ class openPMD_io {
 public:
 	///\brief constructor
 	explicit openPMD_io(
-	    const std::string& filename,             ///< filename
-	    openPMD::Access read_mode,               ///< file access mode (read/write/append)
-	    std::string mc_code_name           = "", ///< McStas code name
-	    std::string mc_code_version        = "", ///< McStas code version
-	    std::string instrument_name        = "", ///< McStas instrument name
-	    std::string name_current_component = ""  ///< name of the current component
+	        const std::string& filename,             ///< filename
+	        openPMD::Access read_mode,               ///< file access mode (read/write/append)
+	        std::string mc_code_name           = "", ///< McStas code name
+	        std::string mc_code_version        = "", ///< McStas code version
+	        std::string instrument_name        = "", ///< McStas instrument name
+	        std::string name_current_component = ""  ///< name of the current component
 	);
 
 	/// \brief initializes the "series" object from the openPMD API in WRITE MODE
@@ -53,14 +53,14 @@ public:
 	            double t, double p);
 
 	/** \brief save neutron properties in a vector
-     *
-     * Reads neutron data from particle instance in format useful for McStas
-     * \param[out] x,y,z : neutron position in m
-     * \param[out] sx, sy, sz : neutron polarization (not working yet)
-     * \param[out] vx, vy, vz : neutron velocity m/s
-     * \param[out] t : time [s]
-     * \param[out] p : weight
-     */
+	 *
+	 * Reads neutron data from particle instance in format useful for McStas
+	 * \param[out] x,y,z : neutron position in m
+	 * \param[out] sx, sy, sz : neutron polarization (not working yet)
+	 * \param[out] vx, vy, vz : neutron velocity m/s
+	 * \param[out] t : time [s]
+	 * \param[out] p : weight
+	 */
 	void
 	trace_read(double* x, double* y, double* z,    // position
 	           double* sx, double* sy, double* sz, // polarization
@@ -104,7 +104,7 @@ private:
 	void
 	init_neutron_prop(std::string name, openPMD::Dataset& dataset, bool isScalar,
 	                  std::map<openPMD::UnitDimension, double> const& dims =
-	                      {{openPMD::UnitDimension::L, 0.}},
+	                          {{openPMD::UnitDimension::L, 0.}},
 	                  double unitSI = 0.);
 
 	void

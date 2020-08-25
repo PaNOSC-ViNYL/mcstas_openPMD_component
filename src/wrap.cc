@@ -41,14 +41,14 @@ init_read(openPMD_io* op, enum openPMD_output_format_t extension, unsigned long 
 }
 
 void
-trace_write(openPMD_io* op, double x, double y, double z, double sx, double sy, double sz, double vx,
-            double vy, double vz, double t, double p) {
+trace_write(openPMD_io* op, double x, double y, double z, double sx, double sy, double sz,
+            double vx, double vy, double vz, double t, double p) {
 	op->trace_write(x, y, z, sx, sy, sz, vx, vy, vz, t, p); //, userflag);
 };
 
 void
-trace_read(openPMD_io* op, double* x, double* y, double* z, double* sx, double* sy, double* sz, double* vx,
-           double* vy, double* vz, double* t, double* p) {
+trace_read(openPMD_io* op, double* x, double* y, double* z, double* sx, double* sy, double* sz,
+           double* vx, double* vy, double* vz, double* t, double* p) {
 	op->trace_read(x, y, z, sx, sy, sz, vx, vy, vz, t, p); //, userflag);
 };
 
