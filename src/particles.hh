@@ -13,7 +13,7 @@ private:
 	        _vx, _vy, _vz,                 // direction (vx^2+vy^2+vz^2) = 1
 	        _abs_v, _time, _weight, _ekin; // velocity, time, weight, kinetic energy
 	//	std::vector<uint32_t> _userflag;
-	size_t _size;            // number of stored neutrons
+	size_t _size; // number of stored neutrons
 	size_t _read; // current index when reading
 
 public:

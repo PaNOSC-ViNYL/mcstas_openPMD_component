@@ -2,7 +2,7 @@
 This package provies a McStas component for reading and writing neutrons from/to a file on disk.
 
 # To do
- * [ ] complete the writing
+ * [X] complete the writing
  * [X] implement the reading
  * [ ] add possibility to decide the file format (now hardcoded as HDF5)
  * [ ] neutrons are saved in chunks, the chunk size is hardcoded
@@ -13,7 +13,7 @@ This package provies a McStas component for reading and writing neutrons from/to
  * [X] add licence file: GPLv2
  * [ ] add authors and commented header in all files
  * [ ] put on github
- 
+ * [ ] make it compatible with MPI
 
 # Dependencies
  - cmake 3.11.2

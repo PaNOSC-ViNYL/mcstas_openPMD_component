@@ -50,9 +50,9 @@ public:
 	/** Flushes the output to file before closing it */
 	void
 	save_write(void);
+
 private:
 	///@}
-	
 
 	/***************************************************************/
 	/// \name Reading mode
@@ -83,8 +83,6 @@ public:
 private:
 	void
 	load_chunk(void);
-
-	
 
 private:
 	std::string _name;
@@ -121,8 +119,6 @@ private:
 	                  std::map<openPMD::UnitDimension, double> const& dims =
 	                          {{openPMD::UnitDimension::L, 0.}},
 	                  double unitSI = 0.);
-
-
 };
 
 #endif

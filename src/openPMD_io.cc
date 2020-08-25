@@ -104,6 +104,10 @@ openPMD_io::init_write(openPMD_output_format_t extension, unsigned long long int
 	        new openPMD::Series(filename, openPMD::Access::CREATE));
 
 	_series->setAuthor("openPMD output component");
+	// latticeName: name of the instrument
+	// latticeFile: name of the instrument file
+	// branchIndex: unique index number assigned to the latice branch the[article is in. (it should be per particle
+	//
 	std::cout << "Filename: " << filename << std::endl; // remove
 
 	// set the mccode, mccode_version, component name, instrument name
@@ -201,9 +205,10 @@ openPMD_io::load_chunk(void) {
 	// Missing polarization vector
 
 	openPMD::Extent chunk_size = {(extent[0] > CHUNK_SIZE) ? CHUNK_SIZE : extent[0]};
-
-	std::cout << "  Found " << extent[0] << " entries of type " << x_dat.getDatatype()
-	          << std::endl;
+#ifdef DEBUG
+	std::cout << "  Loading chunk of size " << chunk_size[0] << "; file contains " << extent[0]
+	          << " entries of type " << x_dat.getDatatype() << std::endl;
+#endif
 	/* I don't understand....
 	 * the data type info is embedded in the data... so why do we need to declare loadChunk<float>?
 	 * it should overload to the right function... and return the correct datatype.
@@ -227,11 +232,13 @@ openPMD_io::load_chunk(void) {
 	// Store openPMD data in neutrons particle instance
 	for (size_t index = 0; index < chunk_size[0]; index++) {
 		_neutrons.store(all_x_data.get()[index], all_y_data.get()[index],
-		                all_z_data.get()[index], all_dx_data.get()[index],
-		                all_dy_data.get()[index], all_dz_data.get()[index],
+		                all_z_data.get()[index], //
 		                all_sx_data.get()[index], all_sy_data.get()[index],
-		                all_sz_data.get()[index], time_data.get()[index],
-		                weight_data.get()[index], energy_data.get()[index]);
+		                all_sz_data.get()[index], //
+		                all_dx_data.get()[index], all_dy_data.get()[index],
+		                all_dz_data.get()[index], //
+		                time_data.get()[index], weight_data.get()[index],
+		                energy_data.get()[index]);
 	}
 }
 

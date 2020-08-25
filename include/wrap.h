@@ -12,7 +12,6 @@ extern "C" {
  * as an external library.
  */
 
-
 /** \brief openPMD_io struct, defined from the openPMD_io class */
 typedef struct openPMD_io openPMD_io;
 
