@@ -1,7 +1,9 @@
-#include "particle.hh"
+#include "particles.hh"
 #include <array>
 #include <cmath>
+#ifdef DEBUG
 #include <iostream> // for debug
+#endif
 ///\file
 #ifndef V2SE
 #define VS2E 5.22703725e-6 /* Convert (v[m/s])**2 to E[meV] */

@@ -2,7 +2,7 @@
 #define MCSTAS_COMPONENT_BASE_HH
 ///\file
 #include "openpmd_output_formats.h" // enum with the available openPMD backends
-#include "particle.hh"              // helper class that stores the neutrons and returns 1D vectors
+#include "particles.hh"             // helper class that stores the neutrons and returns 1D vectors
 #include <openPMD/openPMD.hpp>      // openPMD C++ API
 #include <string>
 

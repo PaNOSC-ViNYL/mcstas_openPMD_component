@@ -14,7 +14,7 @@ add_subdirectory("openPMD-api")
 #add_library(hello SHARED hello.cpp)
 #target_link_libraries(hello PUBLIC openPMD::openPMD)
 
-add_library(component SHARED src/openPMD_io.cc src/particle.cc)
+add_library(component SHARED src/openPMD_io.cc src/particles.cc)
 set_target_properties(component
   PROPERTIES LINKER_LANGUAGE CXX
   )

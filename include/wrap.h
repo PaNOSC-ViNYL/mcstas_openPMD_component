@@ -29,7 +29,7 @@ openPMD_read(const char* filename, const char* mc_code_name, const char* mc_code
 
 /* openPMD_io *openPMD_append(const char *name); */
 
-/** wrapper of openPMD_io::init_write() method */
+/** \brief wrapper of openPMD_io::init_write() method */
 void
 init_write(openPMD_io* op, enum openPMD_output_format_t extension, unsigned long long int n_neutrons
            //, unsigned int iter
@@ -37,19 +37,20 @@ init_write(openPMD_io* op, enum openPMD_output_format_t extension, unsigned long
 
 /** wrapper of openPMD_io::trace_write() */
 void
-trace_write(openPMD_io* op, double x, double y, double z, double sx, double sy, double sz, double vx,
-            double vy, double vz, double t, double p);
+trace_write(openPMD_io* op, double x, double y, double z, double sx, double sy, double sz,
+            double vx, double vy, double vz, double t, double p);
 
-/** wrapper of openPMD_io::init_read() method */
-void
+/** wrapper of openPMD_io::init_read() method
+ * \return number of particles saved in the file */
+unsigned long long int
 init_read(openPMD_io* op, enum openPMD_output_format_t extension, unsigned long long int n_neutrons
           //, unsigned int iter
 );
 
 /** wrapper of openPMD_io::trace_read() */
 void
-trace_read(openPMD_io* op, double* x, double* y, double* z, double* sx, double* sy, double* sz, double* vx,
-           double* vy, double* vz, double* t, double* p);
+trace_read(openPMD_io* op, double* x, double* y, double* z, double* sx, double* sy, double* sz,
+           double* vx, double* vy, double* vz, double* t, double* p);
 
 /** wrapper of openPMD_io::save_write() */
 void
