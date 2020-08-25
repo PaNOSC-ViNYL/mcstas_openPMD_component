@@ -23,20 +23,16 @@ public:
 	        std::string name_current_component = ""  ///< name of the current component
 	);
 
+	/***************************************************************/
+	/// \name Writing mode
+	///@{
+public:
 	/// \brief initializes the "series" object from the openPMD API in WRITE MODE
 	void
 	init_write(openPMD_output_format_t output_format, ///< output format
 	           unsigned long long int n_neutrons, ///< number of neutrons being simulated (max)
 	           unsigned int iter = 1 ///< openPMD iteration, always using the default value
 	);
-
-	/// \brief initializes the "series" object from the openPMD API in READ MODE
-	unsigned long long int
-	init_read(openPMD_output_format_t output_format, ///< output format
-	          unsigned long long int n_neutrons, ///< number of neutrons being simulated (max)
-	          unsigned int iter = 1 ///< openPMD iteration, always using the default value
-	);
-
 	/** \brief save neutron properties in a vector
 	 *
 	 * it writes to the file when the number of neutrons reaches CHUNK_SIZE as defined in the openPMD_io.cc file 
@@ -51,6 +47,23 @@ public:
 	            double sx, double sy, double sz, // polarization
 	            double vx, double vy, double vz, // velocity
 	            double t, double p);
+	/** Flushes the output to file before closing it */
+	void
+	save_write(void);
+private:
+	///@}
+	
+
+	/***************************************************************/
+	/// \name Reading mode
+	///@{
+public:
+	/// \brief initializes the "series" object from the openPMD API in READ MODE
+	unsigned long long int
+	init_read(openPMD_output_format_t output_format, ///< output format
+	          unsigned long long int n_neutrons, ///< number of neutrons being simulated (max)
+	          unsigned int iter = 1 ///< openPMD iteration, always using the default value
+	);
 
 	/** \brief save neutron properties in a vector
 	 *
@@ -66,10 +79,12 @@ public:
 	           double* sx, double* sy, double* sz, // polarization
 	           double* vx, double* vy, double* vz, // velocity
 	           double* t, double* p);
-
-	/** Flushes the output to file before closing it */
+	///@}
+private:
 	void
-	save_write(void);
+	load_chunk(void);
+
+	
 
 private:
 	std::string _name;
@@ -107,8 +122,7 @@ private:
 	                          {{openPMD::UnitDimension::L, 0.}},
 	                  double unitSI = 0.);
 
-	void
-	load_chunk(void);
+
 };
 
 #endif

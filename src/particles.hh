@@ -14,13 +14,13 @@ private:
 	        _abs_v, _time, _weight, _ekin; // velocity, time, weight, kinetic energy
 	//	std::vector<uint32_t> _userflag;
 	size_t _size;            // number of stored neutrons
-	unsigned long int _read; // current index when reading
+	size_t _read; // current index when reading
 
 public:
 	/// \brief default constructor
 	particles();
 
-	/** \brief append a new neutron
+	/** \brief append a new neutron from McStas (\b doing \b conversions)
 	 * \param[in] x,y,z : neutron position          -> it is converted to cm ( * 100)
 	 * \param[in] sx, sy, sz : neutron polarization
 	 * \param[in] vx, vy, vz : neutron velocity     -> only the direction is stored
@@ -33,7 +33,7 @@ public:
 	          double vx, double vy, double vz, // velocity
 	          double t, double p);             // time and weight //, uint32_t userflag = 0);
 
-	/** \brief append a new neutron from openPMD data
+	/** \brief append a new neutron from *openPMD data*
      * \param[in] x,y,z : neutron position in cm
      * \param[in] sx, sy, sz : neutron polarization (not working yet)
      * \param[in] dx, dy, dz : neutron direction
