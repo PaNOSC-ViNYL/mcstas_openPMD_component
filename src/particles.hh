@@ -86,6 +86,15 @@ public:
 		return _size;
 	};
 
+	/** \brief check if all the data have been already retrieved
+	 * \return bool : true if all the data stored have been retrieved
+	 * it return true also if it is empty
+	 */
+	bool
+	is_chunk_finished(void) {
+		return _read == _size;
+	}
+
 	// clang-format off
 	/** \name 1D vector quantities of stored neutrons
 | Variable | Comment        | Units                  |

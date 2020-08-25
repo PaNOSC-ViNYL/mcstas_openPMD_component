@@ -51,6 +51,7 @@ DECLARE
 %{
   //  printf("[DECLARE] declaring openPMD_io\n");
   openPMD_io *op = NULL;
+  unsigned long long int nparticles=0;
   //mcpl_outfile_t outputfile;
   // mcpl_particle_t *particle,Particle;
   // int userflagenabled;
@@ -74,8 +75,17 @@ INITIALIZE
 
   // the file format could be deduced from the file extension
   // op, output format, , max number of neutrons
-  init_read(op, HDF5, mcget_ncount());  /* JSON or HDF5: enum*/
-  printf("[INITIALIZE] Init done\n");
+  nparticles = init_read(op, HDF5, mcget_ncount());  /* JSON or HDF5: enum*/
+  if(nparticles<mcget_ncount()){
+	  printf("[WARNING] Number of particles in file %s < than requested: %llu < %llu\n",
+		 input,
+		 nparticles,
+		 mcget_ncount());
+	  mcset_ncount(nparticles);	  
+  }
+
+
+  printf("[INITIALIZE] Init done: %llu\n", mcget_ncount());
 %}
 
 TRACE

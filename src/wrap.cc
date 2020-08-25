@@ -33,11 +33,11 @@ init_write(openPMD_io* op, enum openPMD_output_format_t extension, unsigned long
 	op->init_write(extension, n_neutrons); //, iter);
 }
 
-void
+unsigned long long int
 init_read(openPMD_io* op, enum openPMD_output_format_t extension, unsigned long long int n_neutrons
           //, unsigned int iter
 ) {
-	op->init_read(extension, n_neutrons); //, iter);
+	return op->init_read(extension, n_neutrons); //, iter);
 }
 
 void

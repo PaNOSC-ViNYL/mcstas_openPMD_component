@@ -18,9 +18,9 @@ const std::map<openPMD_output_format_t, std::string> openPMD_io::output_format_n
 };
 
 //------------------------------------------------------------
-openPMD_io::openPMD_io(const std::string& filename, openPMD::Access read_mode, std::string mc_code_name,
-                       std::string mc_code_version, std::string instrument_name,
-                       std::string name_current_component):
+openPMD_io::openPMD_io(const std::string& filename, openPMD::Access read_mode,
+                       std::string mc_code_name, std::string mc_code_version,
+                       std::string instrument_name, std::string name_current_component):
     _name(filename),
     _mc_code_name(mc_code_name),
     _mc_code_version(mc_code_version),
@@ -70,10 +70,12 @@ openPMD_io::init_neutrons(unsigned int iter, unsigned long long int n_neutrons) 
 	neutrons.setAttribute("PDGID", "2112");
 	// declare the dataset total size: the final size
 
-	openPMD::Dataset dataset = openPMD::Dataset(openPMD::Datatype::FLOAT, openPMD::Extent{n_neutrons});
+	openPMD::Dataset dataset =
+	    openPMD::Dataset(openPMD::Datatype::FLOAT, openPMD::Extent{n_neutrons});
 
 	init_neutron_prop("position", dataset, false, {{openPMD::UnitDimension::L, 1.}}, 1e-2);
 	init_neutron_prop("direction", dataset, false);
+	init_neutron_prop("polarization", dataset, false);
 	// now set the scalars
 	init_neutron_prop("weight", dataset, true);
 	init_neutron_prop("time", dataset, true, {{openPMD::UnitDimension::T, 1.}}, 1e-3);
@@ -98,7 +100,8 @@ openPMD_io::init_write(openPMD_output_format_t extension, unsigned long long int
 	filename += std::string(".") + a;
 
 	// assign the global variable to keep track of it
-	_series = std::unique_ptr<openPMD::Series>(new openPMD::Series(filename, openPMD::Access::CREATE));
+	_series = std::unique_ptr<openPMD::Series>(
+	    new openPMD::Series(filename, openPMD::Access::CREATE));
 
 	_series->setAuthor("openPMD output component");
 	std::cout << "Filename: " << filename << std::endl; // remove
@@ -135,8 +138,8 @@ openPMD_io::save_write(void) {
 	if (_neutrons.size() == 0)
 		return;
 #ifdef DEBUG
-	std::cout << "Number of saved neutrons: " << _neutrons.size() << "\t" << _neutrons.x().size()
-	          << std::endl;
+	std::cout << "Number of saved neutrons: " << _neutrons.size() << "\t"
+	          << _neutrons.x().size() << std::endl;
 #endif
 	auto neutrons = neutrons_pmd();
 
@@ -149,12 +152,19 @@ openPMD_io::save_write(void) {
 	neutrons["direction"]["y"].storeChunk(openPMD::shareRaw(_neutrons.vy()), _offset, extent);
 	neutrons["direction"]["z"].storeChunk(openPMD::shareRaw(_neutrons.vz()), _offset, extent);
 
-	neutrons["time"][openPMD::RecordComponent::SCALAR].storeChunk(openPMD::shareRaw(_neutrons.time()),
-	                                                              _offset, extent);
-	neutrons["energy"][openPMD::RecordComponent::SCALAR].storeChunk(openPMD::shareRaw(_neutrons.ekin()),
-	                                                                _offset, extent);
-	neutrons["weight"][openPMD::RecordComponent::SCALAR].storeChunk(openPMD::shareRaw(_neutrons.weight()),
-	                                                                _offset, extent);
+	neutrons["polarization"]["x"].storeChunk(openPMD::shareRaw(_neutrons.sx()), _offset,
+	                                         extent);
+	neutrons["polarization"]["y"].storeChunk(openPMD::shareRaw(_neutrons.sy()), _offset,
+	                                         extent);
+	neutrons["polarization"]["z"].storeChunk(openPMD::shareRaw(_neutrons.sz()), _offset,
+	                                         extent);
+
+	neutrons["time"][openPMD::RecordComponent::SCALAR].storeChunk(
+	    openPMD::shareRaw(_neutrons.time()), _offset, extent);
+	neutrons["energy"][openPMD::RecordComponent::SCALAR].storeChunk(
+	    openPMD::shareRaw(_neutrons.ekin()), _offset, extent);
+	neutrons["weight"][openPMD::RecordComponent::SCALAR].storeChunk(
+	    openPMD::shareRaw(_neutrons.weight()), _offset, extent);
 
 	_series->flush();
 	_neutrons.clear();
@@ -162,13 +172,79 @@ openPMD_io::save_write(void) {
 		_offset[i] += extent[i];
 }
 
+//------------------------------------------------------------
+
 void
+openPMD_io::load_chunk(void) {
+	_neutrons.clear(); // Necessary to set _read to zero
+	
+	auto neutron_data = neutrons_pmd();
+
+	auto x_dat      = neutron_data["position"]["x"];
+
+	// Assume all have same length
+	openPMD::Extent extent     = x_dat.getExtent();
+
+	if(extent[0]==0){
+		std::cout << "[STATUS][LoadChunk] No more data to read" << std::endl;
+		return;
+	}
+	auto y_dat      = neutron_data["position"]["y"];
+	auto z_dat      = neutron_data["position"]["z"];
+	auto dx_dat     = neutron_data["direction"]["x"];
+	auto dy_dat     = neutron_data["direction"]["y"];
+	auto dz_dat     = neutron_data["direction"]["z"];
+	auto sx_dat     = neutron_data["polarization"]["x"];
+	auto sy_dat     = neutron_data["polarization"]["y"];
+	auto sz_dat     = neutron_data["polarization"]["z"];
+	auto time_dat   = neutron_data["time"][openPMD::RecordComponent::SCALAR];
+	auto energy_dat = neutron_data["energy"][openPMD::RecordComponent::SCALAR];
+	auto weight_dat = neutron_data["weight"][openPMD::RecordComponent::SCALAR];
+	// Missing polarization vector
+
+	openPMD::Extent chunk_size = {(extent[0] > CHUNK_SIZE) ? CHUNK_SIZE : extent[0]};
+
+	std::cout << "  Found " << extent[0] << " entries of type " << x_dat.getDatatype()
+	          << std::endl;
+	/* I don't understand....
+	 * the data type info is embedded in the data... so why do we need to declare loadChunk<float>?
+	 * it should overload to the right function... and return the correct datatype.
+	 */
+	auto all_x_data  = x_dat.loadChunk<float>(_offset, chunk_size);
+	auto all_y_data  = y_dat.loadChunk<float>(_offset, chunk_size);
+	auto all_z_data  = z_dat.loadChunk<float>(_offset, chunk_size);
+	auto all_dx_data = dx_dat.loadChunk<float>(_offset, chunk_size);
+	auto all_dy_data = dy_dat.loadChunk<float>(_offset, chunk_size);
+	auto all_dz_data = dz_dat.loadChunk<float>(_offset, chunk_size);
+	auto all_sx_data = sx_dat.loadChunk<float>(_offset, chunk_size);
+	auto all_sy_data = sy_dat.loadChunk<float>(_offset, chunk_size);
+	auto all_sz_data = sz_dat.loadChunk<float>(_offset, chunk_size);
+	auto time_data   = time_dat.loadChunk<float>(_offset, chunk_size);
+	auto energy_data = energy_dat.loadChunk<float>(_offset, chunk_size);
+	auto weight_data = weight_dat.loadChunk<float>(_offset, chunk_size);
+	// Missing polarization vector
+
+	_series->flush();
+
+
+	// Store openPMD data in neutrons particle instance
+	for (size_t index = 0; index < chunk_size[0]; index++) {
+		_neutrons.store(
+		    all_x_data.get()[index], all_y_data.get()[index], all_z_data.get()[index],
+		    all_dx_data.get()[index], all_dy_data.get()[index], all_dz_data.get()[index],
+		    all_sx_data.get()[index], all_sy_data.get()[index], all_sz_data.get()[index],
+		    time_data.get()[index], weight_data.get()[index], energy_data.get()[index]);
+	}
+}
+
+unsigned long long int
 openPMD_io::init_read(openPMD_output_format_t extension, unsigned long long int n_neutrons,
                       unsigned int iter) {
 	std::string filename = _name;
 
 	// assign the global variable to keep track of it
-	_series = std::unique_ptr<openPMD::Series>(new openPMD::Series(filename, openPMD::Access::READ_ONLY));
+	_series = std::unique_ptr<openPMD::Series>(
+	    new openPMD::Series(filename, openPMD::Access::READ_ONLY));
 
 	std::cout << "File information: " << filename << std::endl;
 	if (_series->containsAttribute("author"))
@@ -179,57 +255,25 @@ openPMD_io::init_read(openPMD_output_format_t extension, unsigned long long int 
 	if (_series->iterations.size() == 0)
 		std::cout << "  ERROR, no iterations found in openPMD series" << std::endl;
 	if (_series->iterations.size() > 1)
-		std::cout << "  WARNING, several iterations found in openPMD series, only 1 is used."
-		          << std::endl;
+		std::cout
+		    << "  WARNING, several iterations found in openPMD series, only 1 is used."
+		    << std::endl;
 
-	auto our_data     = _series->iterations[ITER];
-	auto neutron_data = our_data.particles["neutron"];
-
-	auto x_dat      = neutron_data["position"]["x"];
-	auto y_dat      = neutron_data["position"]["y"];
-	auto z_dat      = neutron_data["position"]["z"];
-	auto dx_dat     = neutron_data["direction"]["x"];
-	auto dy_dat     = neutron_data["direction"]["y"];
-	auto dz_dat     = neutron_data["direction"]["z"];
-	auto time_dat   = neutron_data["time"][openPMD::RecordComponent::SCALAR];
-	auto energy_dat = neutron_data["energy"][openPMD::RecordComponent::SCALAR];
-	auto weight_dat = neutron_data["weight"][openPMD::RecordComponent::SCALAR];
-	// Missing polarization vector
-
-	// Assume all have same length
-	openPMD::Extent x_extent = x_dat.getExtent();
-
-	std::cout << "  Found " << x_extent[0] << " entries of type " << x_dat.getDatatype() << std::endl;
-
-	auto all_x_data  = x_dat.loadChunk<float>();
-	auto all_y_data  = y_dat.loadChunk<float>();
-	auto all_z_data  = z_dat.loadChunk<float>();
-	auto all_dx_data = dx_dat.loadChunk<float>();
-	auto all_dy_data = dy_dat.loadChunk<float>();
-	auto all_dz_data = dz_dat.loadChunk<float>();
-	auto time_data   = time_dat.loadChunk<float>();
-	auto energy_data = energy_dat.loadChunk<float>();
-	auto weight_data = weight_dat.loadChunk<float>();
-	// Missing polarization vector
-
-	_series->flush();
+	// check the maximum number of neutrons stored
+	auto neutron_data      = neutrons_pmd();
+	auto x_dat             = neutron_data["position"]["x"];
+	openPMD::Extent extent = x_dat.getExtent();
 	_neutrons.clear(); // Necessary to set _read to zero
-
-	// Store openPMD data in neutrons particle instance
-	for (size_t index = 0; index < x_extent[0]; index++) {
-		_neutrons.store(all_x_data.get()[index], all_y_data.get()[index], all_z_data.get()[index],
-		                all_dx_data.get()[index], all_dy_data.get()[index],
-		                all_dz_data.get()[index], // using dxyz as pol for now
-		                all_dx_data.get()[index], all_dy_data.get()[index], all_dz_data.get()[index],
-		                time_data.get()[index], weight_data.get()[index], energy_data.get()[index]);
-	}
+	return extent[0];
 }
 
 //------------------------------------------------------------
 void
-openPMD_io::trace_read(double* x, double* y, double* z, double* sx, double* sy, double* sz, double* vx,
-                       double* vy, double* vz, double* t, double* p) {
+openPMD_io::trace_read(double* x, double* y, double* z, double* sx, double* sy, double* sz,
+                       double* vx, double* vy, double* vz, double* t, double* p) {
 
+	if(_neutrons.is_chunk_finished()) load_chunk(); // proceed with a new chunk
+	if(_neutrons.size()==0) return; // there was nothing more to read
 	// Get neutron state from neutrons particle instance
 	_neutrons.retrieve(x, y, z, sx, sy, sz, vx, vy, vz, t,
 	                   p); // Will loop internally if more than data size is read

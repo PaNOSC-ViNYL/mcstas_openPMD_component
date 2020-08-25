@@ -14,25 +14,26 @@
 class openPMD_io {
 public:
 	///\brief constructor
-	explicit openPMD_io(const std::string& filename,             ///< filename
-	                    openPMD::Access read_mode,               ///< file access mode (read/write/append)
-	                    std::string mc_code_name           = "", ///< McStas code name
-	                    std::string mc_code_version        = "", ///< McStas code version
-	                    std::string instrument_name        = "", ///< McStas instrument name
-	                    std::string name_current_component = ""  ///< name of the current component
+	explicit openPMD_io(
+	    const std::string& filename,             ///< filename
+	    openPMD::Access read_mode,               ///< file access mode (read/write/append)
+	    std::string mc_code_name           = "", ///< McStas code name
+	    std::string mc_code_version        = "", ///< McStas code version
+	    std::string instrument_name        = "", ///< McStas instrument name
+	    std::string name_current_component = ""  ///< name of the current component
 	);
 
 	/// \brief initializes the "series" object from the openPMD API in WRITE MODE
 	void
 	init_write(openPMD_output_format_t output_format, ///< output format
-	           unsigned long long int n_neutrons,     ///< number of neutrons being simulated (max)
+	           unsigned long long int n_neutrons, ///< number of neutrons being simulated (max)
 	           unsigned int iter = 1 ///< openPMD iteration, always using the default value
 	);
 
 	/// \brief initializes the "series" object from the openPMD API in READ MODE
-	void
+	unsigned long long int
 	init_read(openPMD_output_format_t output_format, ///< output format
-	          unsigned long long int n_neutrons,     ///< number of neutrons being simulated (max)
+	          unsigned long long int n_neutrons, ///< number of neutrons being simulated (max)
 	          unsigned int iter = 1 ///< openPMD iteration, always using the default value
 	);
 
@@ -88,6 +89,7 @@ private:
 	void
 	init_neutrons(unsigned int iter, unsigned long long int n_neutrons);
 
+	//------------------------------ set of helper methods
 	inline openPMD::Iteration&
 	iter_pmd(void) {
 		return _series->iterations[ITER];
@@ -101,9 +103,12 @@ private:
 
 	void
 	init_neutron_prop(std::string name, openPMD::Dataset& dataset, bool isScalar,
-	                  std::map<openPMD::UnitDimension, double> const& dims = {{openPMD::UnitDimension::L,
-	                                                                           0.}},
-	                  double unitSI                                        = 0.);
+	                  std::map<openPMD::UnitDimension, double> const& dims =
+	                      {{openPMD::UnitDimension::L, 0.}},
+	                  double unitSI = 0.);
+
+	void
+	load_chunk(void);
 };
 
 #endif
