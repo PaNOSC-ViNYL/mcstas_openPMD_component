@@ -47,22 +47,19 @@ particles::store(double x, double y, double z,    //
                  double dx, double dy, double dz, //
                  double time, double weight, double ekin) {
 
-	// Calculate velocity from energy
-	double abs_v = sqrt(ekin * 1e9 / VS2E);
-
-	_x.push_back(x / 100.);
-	_y.push_back(y / 100.);
-	_z.push_back(z / 100.);
+	_x.push_back(x);
+	_y.push_back(y);
+	_z.push_back(z);
 
 	_sx.push_back(sx);
 	_sy.push_back(sy);
 	_sz.push_back(sz);
 
-	_vx.push_back(dx * abs_v);
-	_vy.push_back(dy * abs_v);
-	_vz.push_back(dz * abs_v);
+	_vx.push_back(dx);
+	_vy.push_back(dy);
+	_vz.push_back(dz);
 
-	_time.push_back(time * 1e-3);
+	_time.push_back(time);
 
 	_weight.push_back(weight);
 
@@ -77,6 +74,14 @@ particles::store(double x, double y, double z,    //
 	++_size;
 }
 
+/* The unit conversion is done here. This way the content of the object is consistent 
+ * if push_back() is used or if store() is used. This leads to a small
+ * inefficiency when re-using the same neutrons multiple times, since
+ * the conversion has to be repeated for the same neutrons. It is
+ * usually a small performance loss compared to the total time of a
+ * typical simulation, so consistency has been preferred over
+ * performance in this case.
+ */
 void
 particles::retrieve(double* x, double* y, double* z,    //
                     double* sx, double* sy, double* sz, //
@@ -85,22 +90,25 @@ particles::retrieve(double* x, double* y, double* z,    //
 
 	assert(_read <= _size);
 	// Convert position from cm to m
-	*x = _x[_read];
-	*y = _y[_read];
-	*z = _z[_read];
+	*x = _x[_read] / 100;
+	*y = _y[_read] / 100;
+	*z = _z[_read] / 100;
 
 	// Polarization is in the correct format (not written by write component yet)
 	*sx = _sx[_read];
 	*sy = _sy[_read];
 	*sz = _sz[_read];
 
+	// Calculate velocity from energy
+	double abs_v = sqrt(_ekin[_read] * 1e9 / VS2E);
+
 	// Use magnitude of velocity to convert direction to velocity
-	*vx = _vx[_read];
-	*vy = _vy[_read];
-	*vz = _vz[_read];
+	*vx = _vx[_read] * abs_v;
+	*vy = _vy[_read] * abs_v;
+	*vz = _vz[_read] * abs_v;
 
 	// Time from ms to s
-	*t = _time[_read];
+	*t = _time[_read] * 1e-3;
 
 	// Weight is in the correct format
 	*p = _weight[_read];
