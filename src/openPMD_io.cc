@@ -20,12 +20,13 @@ const std::map<openPMD_output_format_t, std::string> openPMD_io::output_format_n
 //------------------------------------------------------------
 openPMD_io::openPMD_io(const std::string& filename, openPMD::Access read_mode,
                        std::string mc_code_name, std::string mc_code_version,
-                       std::string instrument_name, std::string name_current_component):
+                       std::string instrument_name, std::string name_current_component, int repeat):
     _name(filename),
     _mc_code_name(mc_code_name),
     _mc_code_version(mc_code_version),
     _instrument_name(instrument_name),
     _name_current_component(name_current_component),
+    _i_repeat(1), _n_repeat(repeat),
     _access_mode(read_mode),
     _offset({0}),
     _series(nullptr){};
@@ -279,7 +280,17 @@ openPMD_io::trace_read(double* x, double* y, double* z, double* sx, double* sy, 
 
 	if (_neutrons.is_chunk_finished()) load_chunk(); // proceed with a new chunk
 	if (_neutrons.size() == 0) return;               // there was nothing more to read
-	// Get neutron state from neutrons particle instance
-	_neutrons.retrieve(x, y, z, sx, sy, sz, vx, vy, vz, t,
-	                   p); // Will loop internally if more than data size is read
+
+	/* returning the values of the last neutron again
+	 * this is to allow repeting neutrons to be used
+	 */
+	if (_i_repeat < _n_repeat) {
+		_neutrons.retrieve(x, y, z, sx, sy, sz, vx, vy, vz, t, p);
+		++_i_repeat;
+	}else{
+		// Get neutron state from neutrons particle instance
+		_neutrons.retrieve_next(x, y, z, sx, sy, sz, vx, vy, vz, t,
+		                        p); // Will loop internally if more than data size is read
+		_i_repeat = 1;
+	}
 };

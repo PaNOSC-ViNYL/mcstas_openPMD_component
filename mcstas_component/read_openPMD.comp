@@ -29,29 +29,21 @@
 *******************************************************************************/
 
 DEFINE COMPONENT read_openPMD
-DEFINITION PARAMETERS (string input, polarisationuse=0, doubleprec=0, verbose=0, int userflag=0)
-SETTING PARAMETERS (string filename=0, string userflagcomment="", merge_mpi=1, keep_mpi_unmerged=0)
-OUTPUT PARAMETERS (outputfile,particle,Particle, userflagenabled)
-DEPENDENCY "-L. -lhellowrap -Lbuild/lib/"
+DEFINITION PARAMETERS (polarisationuse=0)
+SETTING PARAMETERS (string filename=0, verbose=1, int repeat_count=1, E_smear=0, pos_smear=0, dir_smear=0)
+OUTPUT PARAMETERS (op)
+DEPENDENCY "-L. -Lbuild/lib/"
 //DEPENDENCY "-I@MCCODE_LIB@/libs/mcpl -L@MCCODE_LIB@/libs/mcpl -lmcpl"
 
 
 SHARE
 %{
 #include "wrap.h"
-  /* #include <mcpl.h> */
-/*   int mcpl_file_exist (char *filename) */
-/*   { */
-/*     struct stat   buffer; */
-/*     return (stat (filename, &buffer) == 0); */
-/*   } */
 %}
 
 DECLARE
 %{
-  //  printf("[DECLARE] declaring openPMD_io\n");
   openPMD_io *op = NULL;
-  unsigned long long int nparticles=0;
   //mcpl_outfile_t outputfile;
   // mcpl_particle_t *particle,Particle;
   // int userflagenabled;
@@ -66,19 +58,19 @@ INITIALIZE
   //sprintf(outfile, "%s", NAME_CURRENT_COMP);
   printf("Current component: %s\n", NAME_CURRENT_COMP);
   
-  printf("Will read file: %s\n", input);
-  op = openPMD_read(input, // name of the output file
-		            MCCODE_NAME,
-		            MCCODE_VERSION,
-		            mcinstrument_name,
-		            NAME_CURRENT_COMP);
+  printf("Will read file: %s\n", filename);
+  op = openPMD_read(filename, // name of the output file
+		    MCCODE_NAME,
+		    MCCODE_VERSION,
+		    mcinstrument_name,
+		    NAME_CURRENT_COMP, repeat_count);
 
   // the file format could be deduced from the file extension
   // op, output format, , max number of neutrons
-  nparticles = init_read(op, HDF5, mcget_ncount());  /* JSON or HDF5: enum*/
+  unsigned long long int nparticles = init_read(op, HDF5, mcget_ncount());  /* JSON or HDF5: enum*/
   if(nparticles<mcget_ncount()){
 	  printf("[WARNING] Number of particles in file %s < than requested: %llu < %llu\n",
-		 input,
+		 filename,
 		 nparticles,
 		 mcget_ncount());
 	  //	  mcset_ncount(nparticles);	  

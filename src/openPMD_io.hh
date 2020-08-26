@@ -20,7 +20,8 @@ public:
 	        std::string mc_code_name           = "", ///< McStas code name
 	        std::string mc_code_version        = "", ///< McStas code version
 	        std::string instrument_name        = "", ///< McStas instrument name
-	        std::string name_current_component = ""  ///< name of the current component
+	        std::string name_current_component = "", ///< name of the current component
+		int repeat = 1 ///< number of times a neutron should be repeatedly retrieved
 	);
 
 	/***************************************************************/
@@ -85,12 +86,15 @@ private:
 	load_chunk(void);
 
 private:
+	//parameters defined at construction
 	std::string _name;
 	std::string _mc_code_name;
 	std::string _mc_code_version;
 	std::string _instrument_name;
 	std::string _name_current_component;
+	int _i_repeat, _n_repeat;
 
+	// internal usage
 	openPMD::Access _access_mode;
 	openPMD::Offset _offset;
 	bool _isWriteMode;
@@ -119,6 +123,7 @@ private:
 	                  std::map<openPMD::UnitDimension, double> const& dims =
 	                          {{openPMD::UnitDimension::L, 0.}},
 	                  double unitSI = 0.);
+
 };
 
 #endif

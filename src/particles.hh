@@ -49,12 +49,22 @@ public:
 	      double ekin);                    //  kinetic energy
 
 	/** \brief read a new neutron from openPMD data
+	 * It increaments the reader count
      * \param[out] x,y,z : neutron position in m
      * \param[out] sx, sy, sz : neutron polarization (not working yet)
      * \param[out] vx, vy, vz : neutron velocity in m/s
      * \param[out] t : time in s
      * \param[out] p : weight
      */
+	void
+	retrieve_next(double* x, double* y, double* z,    // position
+	              double* sx, double* sy, double* sz, // polarization
+	              double* vx, double* vy, double* vz, // velocity
+	              double* t, double* p) { // time and weight //, uint32_t userflag = 0);)
+		retrieve(x, y, z, sx, sy, sz, vx, vy, vz, t, p);
+		++_read;
+	}
+
 	void
 	retrieve(double* x, double* y, double* z,    // position
 	         double* sx, double* sy, double* sz, // polarization
@@ -157,6 +167,6 @@ public:
 		return _weight;
 	};
 	///@}
-};
+	};
 
 #endif

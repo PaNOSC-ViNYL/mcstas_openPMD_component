@@ -25,7 +25,7 @@ openPMD_write(const char* filename, const char* mc_code_name, const char* mc_cod
  * file */
 openPMD_io*
 openPMD_read(const char* filename, const char* mc_code_name, const char* mc_code_version,
-             const char* instrument_name, const char* name_current_component);
+             const char* instrument_name, const char* name_current_component, int repeat);
 
 /* openPMD_io *openPMD_append(const char *name); */
 

@@ -113,7 +113,7 @@ particles::retrieve(double* x, double* y, double* z,    //
 	// Weight is in the correct format
 	*p = _weight[_read];
 
-	++_read;
+	//	++_read;
 
 	//	if (_read >= _size)
 	//	_read = 0; // Start over if entire dataset is read
