@@ -24,11 +24,12 @@ This package provies a McStas component for reading and writing neutrons from/to
 ## Output (save)
    - speed
    - disk space: H5 is almost twice as big as compressed MCPL
-| Ctest | mcpl_output.mcpl.gz | openPMD_out.h5 |
-|-------|---------------------|----------------|
-| mid   | 27 MB               | 46 MB          |
+| # neutrons | mcpl_output.mcpl.gz | openPMD_out.h5 |
+|------------|---------------------|----------------|
+| 1e6        | 27  MB               | 46  MB          |
+| 1e7        | 263 MB               | 458 MB          |
 
-   
+
 # Dependencies
  - cmake 3.11.2
  - openPMD C++ API

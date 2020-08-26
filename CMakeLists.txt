@@ -61,7 +61,7 @@ add_test(NAME short COMMAND Test_CppWrap.out -n 100 -s 654321 --exe $<TARGET_FIL
 add_test(NAME mid COMMAND Test_CppWrap.out -n 1e6  -s 654321 --exe $<TARGET_FILE:Test_CppWrap.out>
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
-add_test(NAME long COMMAND Test_CppWrap.out -n 1e8  -s 654321 --exe $<TARGET_FILE:Test_CppWrap.out>
+add_test(NAME long COMMAND Test_CppWrap.out -n 1e7  -s 654321 --exe $<TARGET_FILE:Test_CppWrap.out>
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
 add_test(NAME read COMMAND Test_read_openPMD.out filename=openPMD_out.h5 verbose=1
