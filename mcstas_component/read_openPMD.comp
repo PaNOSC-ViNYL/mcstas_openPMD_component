@@ -81,9 +81,25 @@ INITIALIZE
 		 input,
 		 nparticles,
 		 mcget_ncount());
-	  mcset_ncount(nparticles);	  
-  }
+	  //	  mcset_ncount(nparticles);	  
+  } else nparticles = mcget_ncount();
 
+#if defined (USE_MPI)
+  //    ismpislavegit diff = mpi_node_rank;
+    MPI_MASTER(
+	       fprintf(stdout, " x %i MPI nodes = %ld neutrons total\n",mpi_node_count,mpi_node_count*repeat_cnt*nparticles);
+	       );
+    mcset_ncount(mpi_node_count * nparticles);
+#else
+  fprintf(stdout, " neutrons total\n\n");
+  mcset_ncount(nparticles);
+#endif
+
+  //read_neutrons=0;
+  //used_neutrons=0;
+  if (verbose==1) {
+	  printf("read_openPMD_input verbose mode - outputting data on the 10 first read neutrons:\n");
+  }
 
   printf("[INITIALIZE] Init done: %llu\n", mcget_ncount());
 %}
@@ -97,6 +113,19 @@ TRACE
   	          &vx, &vy, &vz,
   	          &t, &p); //, userflag);
 
+  if(verbose==1 && mcget_run_num()<10 ){
+	  
+	  printf("---------- #%llu\n"
+		 "position     = %10.4f\t%10.4f\t%10.4f\n"
+		 "direction    = %10.4f\t%10.4f\t%10.4f\n"
+		 "polarization = %10.4f\t%10.4f\t%10.4f\n"
+		 "               %10.4f\t%10.4f\n",
+		 mcget_run_num(),
+		 x, y, z,
+		 vx, vy, vz,
+		 sx, sy, sz,
+		 t, p);
+  }
   SCATTER;
  
 %}

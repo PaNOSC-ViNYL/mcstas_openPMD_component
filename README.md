@@ -9,12 +9,14 @@ This package provies a McStas component for reading and writing neutrons from/to
    - to be optimized
    - to be made configurable by the user
  * [ ] define the openPMD extension
- * [ ] conform to the extension
+ * [ ] conform to the extension:
+   - `https://github.com/DavidSagan/openPMD-standard/blob/EXT_BeamPhysics/EXT_BeamPhysics.md`
  * [X] add licence file: GPLv2
  * [ ] add authors and commented header in all files
  * [ ] put on github
  * [ ] make it compatible with MPI
-
+ * [ ] Implement the repeat_count functionality of MCPL -> NO. I feel like it is wrong 
+ 
 # Dependencies
  - cmake 3.11.2
  - openPMD C++ API
