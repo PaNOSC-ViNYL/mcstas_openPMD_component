@@ -15,9 +15,15 @@ This package provies a McStas component for reading and writing neutrons from/to
  * [ ] add authors and commented header in all files
  * [ ] put on github
  * [ ] make it compatible with MPI
+   - [ ] install MPICH
+   - [ ] add compilation with mpicc and execution tests with mpirun
+   - [ ] read the openPMD-api documentation about MPI
+   - [ ] output of different MPI nodes as separate "iterations" in openPMD (maybe it does not need merging)
  * [X] Implement the repeat_count functionality of MCPL
  * [ ] Implement the energy/position/velocity smearing capability
  * [ ] Make comparison with MCPL
+   * [X] Disk space
+   * [ ] Speed: it should be a bit faster because there is not GZIP compression
  * [ ] Make it possible to select MCPL or openPMD in the Test_CppWrap.instr from the command line
  * [ ] Test compilation with mcrun and the way McStas users would do
  
