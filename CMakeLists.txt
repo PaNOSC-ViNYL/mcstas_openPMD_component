@@ -27,11 +27,11 @@ target_include_directories(wrap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(wrap PRIVATE component)
 set_property(TARGET wrap PROPERTY CXX_STANDARD 17)
 
-add_custom_command(OUTPUT Test_CppWrap.c
-  DEPENDS mcstas_component/Test_CppWrap.instr
-  DEPENDS mcstas_component/CppWrap.comp
-  COMMENT "creation of Test_CppWrap.c"
-  COMMAND mcstas -t -o ${CMAKE_BINARY_DIR}/Test_CppWrap.c ${CMAKE_CURRENT_SOURCE_DIR}/mcstas_component/Test_CppWrap.instr -Imcstas_component/
+add_custom_command(OUTPUT Test_write_openPMD.c
+  DEPENDS mcstas_component/Test_write_openPMD.instr
+  DEPENDS mcstas_component/write_openPMD.comp
+  COMMENT "creation of Test_write_openPMD.c"
+  COMMAND mcstas -t -o ${CMAKE_BINARY_DIR}/Test_write_openPMD.c ${CMAKE_CURRENT_SOURCE_DIR}/mcstas_component/Test_write_openPMD.instr -Imcstas_component/
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   )
 
@@ -43,25 +43,25 @@ add_custom_command(OUTPUT Test_read_openPMD.c
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   )
 
-add_executable(Test_CppWrap.out Test_CppWrap.c)
-target_link_libraries(Test_CppWrap.out PRIVATE wrap)
-target_link_libraries(Test_CppWrap.out PRIVATE m)
+add_executable(Test_write_openPMD.out Test_write_openPMD.c)
+target_link_libraries(Test_write_openPMD.out PRIVATE wrap)
+target_link_libraries(Test_write_openPMD.out PRIVATE m)
 # for testing openPMD vs MCPL
-target_include_directories(Test_CppWrap.out PRIVATE $ENV{MCSTAS}/libs/mcpl/)
-target_link_libraries(Test_CppWrap.out PRIVATE $ENV{MCSTAS}/libs/mcpl/libmcpl.a)
+target_include_directories(Test_write_openPMD.out PRIVATE $ENV{MCSTAS}/libs/mcpl/)
+target_link_libraries(Test_write_openPMD.out PRIVATE $ENV{MCSTAS}/libs/mcpl/libmcpl.a)
 
 add_executable(Test_read_openPMD.out Test_read_openPMD.c)
 target_link_libraries(Test_read_openPMD.out PRIVATE wrap)
 target_link_libraries(Test_read_openPMD.out PRIVATE m)
 
 enable_testing()
-add_test(NAME short COMMAND Test_CppWrap.out -n 100 -s 654321 --exe $<TARGET_FILE:Test_CppWrap.out>
+add_test(NAME short COMMAND Test_write_openPMD.out -n 100 -s 654321 --exe $<TARGET_FILE:Test_write_openPMD.out>
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
-add_test(NAME mid COMMAND Test_CppWrap.out -n 1e6  -s 654321 --exe $<TARGET_FILE:Test_CppWrap.out>
+add_test(NAME mid COMMAND Test_write_openPMD.out -n 1e6  -s 654321 --exe $<TARGET_FILE:Test_write_openPMD.out>
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
-add_test(NAME long COMMAND Test_CppWrap.out -n 1e7  -s 654321 --exe $<TARGET_FILE:Test_CppWrap.out>
+add_test(NAME long COMMAND Test_write_openPMD.out -n 1e7  -s 654321 --exe $<TARGET_FILE:Test_write_openPMD.out>
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
 add_test(NAME read COMMAND Test_read_openPMD.out filename=openPMD_out.h5 verbose=1

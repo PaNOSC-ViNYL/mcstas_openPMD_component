@@ -28,7 +28,7 @@
 * %E
 *******************************************************************************/
 
-DEFINE COMPONENT CppWrap
+DEFINE COMPONENT write_openPMD
 DEFINITION PARAMETERS (string outfile="ciao2", useHDF=0, polarisationuse=0, doubleprec=0, verbose=0, int userflag=0)
 SETTING PARAMETERS (string filename=0, string userflagcomment="", merge_mpi=1, keep_mpi_unmerged=0)
 OUTPUT PARAMETERS (outputfile,particle,Particle, userflagenabled)
