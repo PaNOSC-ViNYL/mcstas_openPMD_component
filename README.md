@@ -16,7 +16,18 @@ This package provies a McStas component for reading and writing neutrons from/to
  * [ ] put on github
  * [ ] make it compatible with MPI
  * [ ] Implement the repeat_count functionality of MCPL -> NO. I feel like it is wrong 
- 
+ * [ ] Make comparison with MCPL
+ * [ ] Make it possible to select MCPL or openPMD in the Test_CppWrap.instr from the command line
+
+# Comparison of openPMD vs MCPL
+## Output (save)
+   - speed
+   - disk space: H5 is almost twice as big as compressed MCPL
+| Ctest | mcpl_output.mcpl.gz | openPMD_out.h5 |
+|-------|---------------------|----------------|
+| mid   | 27 MB               | 46 MB          |
+
+   
 # Dependencies
  - cmake 3.11.2
  - openPMD C++ API

@@ -57,6 +57,9 @@ AT (0, 0, 1.0) RELATIVE source
 COMPONENT openPMD_out = CppWrap(outfile="", useHDF=1)
 AT (0, 0, 0) RELATIVE ABSOLUTE
 
+COMPONENT mcpl_out = MCPL_output(filename="mcpl_output.mcpl")
+AT (0,0,0) RELATIVE ABSOLUTE
+
 FINALLY
 %{
 %}

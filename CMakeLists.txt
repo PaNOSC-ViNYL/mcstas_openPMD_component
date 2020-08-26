@@ -46,6 +46,9 @@ add_custom_command(OUTPUT Test_read_openPMD.c
 add_executable(Test_CppWrap.out Test_CppWrap.c)
 target_link_libraries(Test_CppWrap.out PRIVATE wrap)
 target_link_libraries(Test_CppWrap.out PRIVATE m)
+# for testing openPMD vs MCPL
+target_include_directories(Test_CppWrap.out PRIVATE $ENV{MCSTAS}/libs/mcpl/)
+target_link_libraries(Test_CppWrap.out PRIVATE $ENV{MCSTAS}/libs/mcpl/libmcpl.a)
 
 add_executable(Test_read_openPMD.out Test_read_openPMD.c)
 target_link_libraries(Test_read_openPMD.out PRIVATE wrap)
