@@ -11,7 +11,8 @@ before_script:
   - git status
   - mkdir -p build/
   - cd build/
-
+  - mcstas-2.6-environment
+  
 compile:
   stage: build
   script:
