@@ -19,7 +19,8 @@ typedef struct openPMD_io openPMD_io;
  * file */
 openPMD_io*
 openPMD_write(const char* filename, const char* mc_code_name, const char* mc_code_version,
-              const char* instrument_name, const char* name_current_component);
+              const char* instrument_name, const char* name_current_component,
+              int mpi_node_rank);
 
 /** \brief declare an openPMD_io struct, with default parameters to read from openPMD
  * file */
@@ -27,13 +28,12 @@ openPMD_io*
 openPMD_read(const char* filename, const char* mc_code_name, const char* mc_code_version,
              const char* instrument_name, const char* name_current_component, int repeat);
 
-/* openPMD_io *openPMD_append(const char *name); */
+openPMD_io *openPMD_append(const char *name);
 
 /** \brief wrapper of openPMD_io::init_write() method */
 void
-init_write(openPMD_io* op, enum openPMD_output_format_t extension, unsigned long long int n_neutrons
-           //, unsigned int iter
-);
+init_write(openPMD_io* op, enum openPMD_output_format_t extension,
+           unsigned long long int n_neutrons, unsigned int iter);
 
 /** \brief wrapper of openPMD_io::trace_write() */
 void

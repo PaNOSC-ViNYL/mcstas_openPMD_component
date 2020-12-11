@@ -33,7 +33,7 @@ DEFINE COMPONENT write_openPMD
 DEFINITION PARAMETERS (useHDF=0, polarisationuse=0, doubleprec=0, verbose=0, int userflag=0)
 SETTING PARAMETERS (string filename=0, string userflagcomment="", merge_mpi=1, keep_mpi_unmerged=0)
 OUTPUT PARAMETERS (op)
-DEPENDENCY "-L. -lhellowrap -Lbuild/lib/"
+DEPENDENCY "-L.  -Lbuild/lib/"
 //DEPENDENCY "-I@MCCODE_LIB@/libs/mcpl -L@MCCODE_LIB@/libs/mcpl -lmcpl"
 
 
@@ -46,6 +46,9 @@ DECLARE
 %{
   //  printf("[DECLARE] declaring openPMD_io\n");
   openPMD_io *op = NULL;
+#ifndef USE_MPI
+  int mpi_node_rank =0 ;
+#endif
   //mcpl_outfile_t outputfile;
   // mcpl_particle_t *particle,Particle;
   // int userflagenabled;
@@ -54,6 +57,7 @@ DECLARE
 /* Neutron parameters: (x,y,z,vx,vy,vz,t,sx,sy,sz,p) */
 INITIALIZE
 %{
+	
 	char _outfile_[100]; //to be fixed
   printf("Num particles: %d\n", mcget_ncount()); 
   printf("[INITIALIZE] new openPMD_write\n");
@@ -65,13 +69,21 @@ INITIALIZE
   }else sprintf(_outfile_, "%s", filename);
   
   printf("Output file: %s\n", _outfile_);
-  op = openPMD_write(_outfile_, // name of the output file
-		     MCCODE_NAME, 
-		     MCCODE_VERSION,
-		     mcinstrument_name,
-		     NAME_CURRENT_COMP, mpi_node_rank);
-  // op, output format, , max number of neutrons
-  init_write(op, (useHDF ? HDF5 : JSON), mcget_ncount());  /* JSON or HDF5: enum*/
+#ifdef USE_MPI
+   MPI_MASTER(
+	        printf("MASTER Output file: %s\n", _outfile_);
+		printf("mpi_node_rank = %d\n", mpi_node_rank);
+	      );
+#endif
+   op = openPMD_write(_outfile_, // name of the output file
+		      MCCODE_NAME, 
+		      MCCODE_VERSION,
+		      mcinstrument_name,
+		      NAME_CURRENT_COMP,
+		      mpi_node_rank
+		      );
+   // op, output format, , max number of neutrons
+   init_write(op, (useHDF ? HDF5 : JSON), mcget_ncount(), mpi_node_rank);  /* JSON or HDF5: enum*/
   printf("[INITIALIZE] Init done\n");
 %}
 

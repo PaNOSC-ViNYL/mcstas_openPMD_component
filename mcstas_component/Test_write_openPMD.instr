@@ -27,7 +27,6 @@
 * %E
 *******************************************************************************/
 DEFINE INSTRUMENT Test_write_openPMD(string filename="openPMD_out.h5")
-/*string saythis="HelloWorld")*/
 
 DECLARE
 %{
@@ -57,7 +56,7 @@ AT (0, 0, 1.0) RELATIVE source
 COMPONENT openPMD_out = write_openPMD(filename=filename, useHDF=1)
 AT (0, 0, 0) RELATIVE ABSOLUTE
 
-COMPONENT mcpl_out = MCPL_output(filename="mcpl_output.mcpl")
+COMPONENT mcpl_out = MCPL_output(filename="mcpl_output.mcpl", merge_mpi=0, keep_mpi_unmerged=1)
 AT (0,0,0) RELATIVE ABSOLUTE
 
 FINALLY

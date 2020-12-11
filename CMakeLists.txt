@@ -7,6 +7,43 @@ project(CPP-helloworld LANGUAGES CXX C)
 include(GNUInstallDirs)
 
 
+# Options and Variants ########################################################
+#
+function(openpmd_option name description default)
+    set(openPMD_USE_${name} ${default} CACHE STRING "${description}")
+    set_property(CACHE openPMD_USE_${name} PROPERTY
+        STRINGS "ON;TRUE;AUTO;OFF;FALSE"
+    )
+    if(openPMD_HAVE_${name})
+        set(openPMD_HAVE_${name} TRUE)
+    else()
+        set(openPMD_HAVE_${name})
+    endif()
+    # list of all possible options
+    set(openPMD_CONFIG_OPTIONS ${openPMD_CONFIG_OPTIONS} ${name} PARENT_SCOPE)
+endfunction()
+
+##
+option(TEST "Do testing" OFF)
+
+##
+option(MPI "Parallel, Multi-Node I/O for clusters" OFF)
+# MPI is used already by mcstas, don't need to further make I/O parallel with MPI on the openPMD side
+if(MPI)
+  find_package(MPI REQUIRED)
+  # disable MPI for openPMD! use the serial version!
+  set(openPMD_USE_MPI OFF)
+  message("HDF5_ROOT: /${CMAKE_INSTALL_LIBDIR}")
+  set(HDF5_ROOT /) # this because mpi dir is pre-pended, so it would always find the mpi version of hdf5
+   
+else()
+  set(openPMD_USE_MPI OFF)
+
+
+endif()
+
+
+#########################################################
 add_subdirectory("openPMD-api")
 
 
@@ -27,6 +64,8 @@ target_include_directories(wrap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(wrap PRIVATE component)
 set_property(TARGET wrap PROPERTY CXX_STANDARD 17)
 
+if(TEST)
+  
 add_custom_command(OUTPUT Test_write_openPMD.c
   DEPENDS mcstas_component/Test_write_openPMD.instr
   DEPENDS mcstas_component/write_openPMD.comp
@@ -46,6 +85,18 @@ add_custom_command(OUTPUT Test_read_openPMD.c
 add_executable(Test_write_openPMD.out Test_write_openPMD.c)
 target_link_libraries(Test_write_openPMD.out PRIVATE wrap)
 target_link_libraries(Test_write_openPMD.out PRIVATE m)
+# for MPI
+#target_include_directories(Test_write_openPMD.out PRIVATE ${MPI_CXX_INCLUDE_PATH})
+
+#target_link_libraries(Test_write_openPMD.out PUBLIC ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS})
+if(MPI_FOUND)
+  #    message("MPI: ${MPI_CXX_LIBRARIES}")
+      message("MPI: ${MPIEXEC_EXECUTABLE}")
+      target_link_libraries(Test_write_openPMD.out PUBLIC ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} MPI::MPI_C)
+      target_compile_options(Test_write_openPMD.out     PRIVATE -DUSE_MPI)
+      #target_compile_options(Test_write_openPMD.out     PRIVATE ${MPI_CXX_COMPILE_FLAGS})
+endif()
+
 # for testing openPMD vs MCPL
 target_include_directories(Test_write_openPMD.out PRIVATE $ENV{MCSTAS}/libs/mcpl/)
 target_link_libraries(Test_write_openPMD.out PRIVATE $ENV{MCSTAS}/libs/mcpl/libmcpl.a)
@@ -55,13 +106,15 @@ target_link_libraries(Test_read_openPMD.out PRIVATE wrap)
 target_link_libraries(Test_read_openPMD.out PRIVATE m)
 
 enable_testing()
-add_test(NAME short COMMAND Test_write_openPMD.out -n 100 -s 654321 --exe $<TARGET_FILE:Test_write_openPMD.out>
+add_test(NAME short COMMAND
+  ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
+  ${MPIEXEC_PREFLAGS} ${CMAKE_BINARY_DIR}/bin/Test_write_openPMD.out ${MPIEXEC_POSTFLAGS}  -n 100 -s 654321 filename=openPMD_out.h5 
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
-add_test(NAME mid COMMAND Test_write_openPMD.out -n 1e6  -s 654321 --exe $<TARGET_FILE:Test_write_openPMD.out>
+add_test(NAME mid COMMAND ${MPIEXEC_EXECUTABLE} Test_write_openPMD.out -n 1e6  -s 654321  filename=openPMD_out.h5
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
-add_test(NAME long COMMAND Test_write_openPMD.out -n 1e7  -s 654321 --exe $<TARGET_FILE:Test_write_openPMD.out>
+add_test(NAME long COMMAND ${MPIEXEC_EXECUTABLE} Test_write_openPMD.out -n 1e7  -s 654321 filename=openPMD_out.h5
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
 add_test(NAME read COMMAND Test_read_openPMD.out filename=openPMD_out.h5 verbose=1
@@ -70,7 +123,7 @@ add_test(NAME read COMMAND Test_read_openPMD.out filename=openPMD_out.h5 verbose
 add_test(NAME read_repeat COMMAND Test_read_openPMD.out filename=openPMD_out.h5 verbose=1 repeat_count=3
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
-
+endif()
 
 
 ################ Doc

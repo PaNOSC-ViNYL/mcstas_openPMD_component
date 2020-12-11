@@ -9,9 +9,11 @@ extern "C" {
 
 openPMD_io*
 openPMD_write(const char* filename, const char* mc_code_name, const char* mc_code_version,
-              const char* instrument_name, const char* name_current_component) {
-	return new openPMD_io(filename, openPMD::Access::CREATE, mc_code_name, mc_code_version,
-	                      instrument_name, name_current_component);
+              const char* instrument_name, const char* name_current_component, int mpi_node_rank) {
+	if(mpi_node_rank==1)
+		return new openPMD_io(filename, openPMD::Access::CREATE, mc_code_name,
+		                      mc_code_version, instrument_name, name_current_component);
+ 	else return openPMD_append(filename);
 }
 
 openPMD_io*
@@ -27,9 +29,8 @@ openPMD_append(const char* name) {
 }
 
 void
-init_write(openPMD_io* op, enum openPMD_output_format_t extension, unsigned long long int n_neutrons
-           //, unsigned int iter
-) {
+init_write(openPMD_io* op, enum openPMD_output_format_t extension,
+           unsigned long long int n_neutrons, unsigned int iter) {
 	op->init_write(extension, n_neutrons); //, iter);
 }
 

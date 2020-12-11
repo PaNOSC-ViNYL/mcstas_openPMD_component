@@ -15,7 +15,7 @@ This package provies a McStas component for reading and writing neutrons from/to
  * [ ] add authors and commented header in all files
  * [ ] put on github
  * [ ] make it compatible with MPI
-   - [ ] install MPICH
+   - [X] install MPICH: instructions for setting environment modules added to the README
    - [ ] add compilation with mpicc and execution tests with mpirun
    - [ ] read the openPMD-api documentation about MPI
    - [ ] output of different MPI nodes as separate "iterations" in openPMD (maybe it does not need merging)
@@ -40,7 +40,8 @@ This package provies a McStas component for reading and writing neutrons from/to
 # Dependencies
  - cmake 3.11.2
  - openPMD C++ API
-
+ - hdf5-mpi
+ 
 ### CENTOS 8
 The CMake version needed for openPMD api, with the options reported in the following instructions, is less stringent than what is marked in the CMakeLists.txt and it is above the version available on CENTOS 8. So a patch is needed:
 ```
@@ -48,6 +49,24 @@ cd openPMD-api
 patch  -p1 < ../cmake_api.patch
 cd -
 ```
+
+Don't need both version of mpi, just choose one
+```
+yum install -y hdf5-{devel,static} hdf5-mpich* hdf5-openmpi*
+```
+
+You need to select the mpi version you want to use. To see the available modules:
+```
+source /usr/share/Modules/init/$SHELL
+module avail
+```
+Then, either `module load mpi/mpich-x86_64` or `module load mpi/openmpi-x86_64`
+
+Don't forget to load the mcstas environment variables:
+```
+mcstas-2.6.1-environment
+```
+
 
 ### Ubuntu 18
 You need a more recent version of CMake
