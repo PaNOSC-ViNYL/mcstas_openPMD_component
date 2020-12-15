@@ -47,6 +47,10 @@ DECLARE
   //mcpl_outfile_t outputfile;
   // mcpl_particle_t *particle,Particle;
   // int userflagenabled;
+  #ifndef USE_MPI
+  int mpi_node_rank =0 ;
+#endif
+
 %}
   
 /* Neutron parameters: (x,y,z,vx,vy,vz,t,sx,sy,sz,p) */
@@ -59,15 +63,15 @@ INITIALIZE
   printf("Current component: %s\n", NAME_CURRENT_COMP);
   
   printf("Will read file: %s\n", filename);
-  op = openPMD_read(filename, // name of the output file
+  op = openPMD_create(filename, // name of the output file
 		    MCCODE_NAME,
 		    MCCODE_VERSION,
 		    mcinstrument_name,
-		    NAME_CURRENT_COMP, repeat_count);
+		    NAME_CURRENT_COMP, mpi_node_rank); /*, repeat_count);*/
 
   // the file format could be deduced from the file extension
   // op, output format, , max number of neutrons
-  unsigned long long int nparticles = init_read(op, HDF5, mcget_ncount());  /* JSON or HDF5: enum*/
+  unsigned long long int nparticles = init_read(op,  mcget_ncount(), mpi_node_rank, repeat_count);  /* JSON or HDF5: enum*/
   if(nparticles<mcget_ncount()){
 	  printf("[WARNING] Number of particles in file %s < than requested: %llu < %llu\n",
 		 filename,

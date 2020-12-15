@@ -5,6 +5,13 @@ if [ "$USER" == "shervin" ];then
     INSTALL_PREFIX="-DCMAKE_INSTALL_PREFIX=/tmp/devel/"
 fi
 
+if [ -n "$MCSTAS" ];then
+    PREFIX=/usr/local/
+    export MCSTAS=${PREFIX}/mcstas/2.6.1
+    export MCSTAS_TOOLS=$PREFIX/mcstas/2.6.1/tools/Perl/
+    export PATH=$PREFIX/mcstas/2.6.1/miniconda3/bin:$PREFIX/mcstas/2.6.1/bin:$PATH
+fi
+
 # if you want to use mpi
 # load the version of MPI
 source /usr/share/Modules/init/bash

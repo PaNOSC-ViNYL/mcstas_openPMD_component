@@ -46,6 +46,7 @@ DECLARE
 %{
   //  printf("[DECLARE] declaring openPMD_io\n");
   openPMD_io *op = NULL;
+  unsigned int iter = 1;
 #ifndef USE_MPI
   int mpi_node_rank =0 ;
 #endif
@@ -75,7 +76,7 @@ INITIALIZE
 		printf("mpi_node_rank = %d\n", mpi_node_rank);
 	      );
 #endif
-   op = openPMD_write(_outfile_, // name of the output file
+   op = openPMD_create(_outfile_, // name of the output file
 		      MCCODE_NAME, 
 		      MCCODE_VERSION,
 		      mcinstrument_name,
@@ -83,7 +84,7 @@ INITIALIZE
 		      mpi_node_rank
 		      );
    // op, output format, , max number of neutrons
-   init_write(op, (useHDF ? HDF5 : JSON), mcget_ncount(), mpi_node_rank);  /* JSON or HDF5: enum*/
+   init_write(op,  mcget_ncount(),  mpi_node_rank);  /* JSON or HDF5: enum*/
   printf("[INITIALIZE] Init done\n");
 %}
 

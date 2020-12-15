@@ -29,7 +29,8 @@ openPMD_io::openPMD_io(const std::string& filename, openPMD::Access read_mode,
     _i_repeat(1), _n_repeat(repeat),
     _access_mode(read_mode),
     _offset({0}),
-    _series(nullptr){};
+    _series(nullptr),
+    _openPMD_io(filename, mc_code_name, mc_code_version, instrument_name, name_current_component){};
 
 //------------------------------------------------------------
 /** \brief

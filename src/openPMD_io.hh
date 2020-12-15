@@ -4,6 +4,7 @@
 #include "openpmd_output_formats.h" // enum with the available openPMD backends
 #include "particles.hh"             // helper class that stores the neutrons and returns 1D vectors
 #include <openPMD/openPMD.hpp>      // openPMD C++ API
+#include <openPMDraytrace/openPMD_io.hh>
 #include <string>
 
 #define ITER 1
@@ -100,7 +101,8 @@ private:
 	bool _isWriteMode;
 	std::unique_ptr<openPMD::Series> _series;
 	particles _neutrons;
-
+	raytracing::openPMD_io _openPMD_io;
+	
 	static const std::map<openPMD_output_format_t, std::string> output_format_names;
 	/** declare the neutron particle species in the file */
 	void

@@ -2,10 +2,16 @@
 # cmake .. -DopenPMD_USE_PYTHON=OFF -DopenPMD_INSTALL=OFF -DopenPMD_USE_INTERNAL_CATCH=ON -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_CLI_TOOLS=OFF
 cmake_minimum_required(VERSION 3.7.2)
 
-project(CPP-helloworld LANGUAGES CXX C)
+project(openpmd_output LANGUAGES CXX C)
 
 include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  set(BUILD_SHARED_LIBS True)
+endif()
+
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 
 # Options and Variants ########################################################
 #
@@ -44,25 +50,24 @@ endif()
 
 
 #########################################################
-add_subdirectory("openPMD-api")
+#add_subdirectory("openPMD-api")
+find_package(openPMD REQUIRED)
+find_package(openPMDraytrace REQUIRED)
 
 
-
-#add_library(hello SHARED hello.cpp)
-#target_link_libraries(hello PUBLIC openPMD::openPMD)
-
-add_library(component SHARED src/openPMD_io.cc src/particles.cc)
-set_target_properties(component
-  PROPERTIES LINKER_LANGUAGE CXX
-  )
-target_include_directories(component PUBLIC include/)
-set_property(TARGET component PROPERTY CXX_STANDARD 17)
-target_link_libraries(component PUBLIC openPMD::openPMD)
+# add_library(component SHARED src/openPMD_io.cc src/particles.cc)
+# set_target_properties(component
+#   PROPERTIES LINKER_LANGUAGE CXX
+#   )
+# target_include_directories(component PUBLIC include/)
+# set_property(TARGET component PROPERTY CXX_STANDARD 17)
+# target_link_libraries(component PUBLIC openPMD::openPMD)
 
 add_library(wrap SHARED src/wrap.cc)
 target_include_directories(wrap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(wrap PRIVATE component)
-set_property(TARGET wrap PROPERTY CXX_STANDARD 17)
+#target_link_libraries(wrap PRIVATE component)
+target_link_libraries(wrap PRIVATE raytrace) # openPMD::openPMD)
+#set_property(TARGET wrap PROPERTY CXX_STANDARD 17)
 
 if(TEST)
   
