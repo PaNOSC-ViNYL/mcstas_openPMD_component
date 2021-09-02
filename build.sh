@@ -5,7 +5,7 @@ if [ "$USER" == "shervin" ];then
     INSTALL_PREFIX="-DCMAKE_INSTALL_PREFIX=/tmp/devel/"
 fi
 
-if [ -n "$MCSTAS" ];then
+if [ -z "$MCSTAS" ];then
     PREFIX=/usr/local/
     export MCSTAS=${PREFIX}/mcstas/2.6.1
     export MCSTAS_TOOLS=$PREFIX/mcstas/2.6.1/tools/Perl/
