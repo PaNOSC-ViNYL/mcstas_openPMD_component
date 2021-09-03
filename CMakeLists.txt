@@ -1,6 +1,6 @@
 # git clone --depth 1 git@github.com:openPMD/openPMD-api.git
 # cmake .. -DopenPMD_USE_PYTHON=OFF -DopenPMD_INSTALL=OFF -DopenPMD_USE_INTERNAL_CATCH=ON -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_CLI_TOOLS=OFF
-cmake_minimum_required(VERSION 3.7.2)
+cmake_minimum_required(VERSION 3.20.2)
 
 project(openpmd_output LANGUAGES CXX C)
 
@@ -50,9 +50,8 @@ endif()
 
 
 #########################################################
-#add_subdirectory("openPMD-api")
 find_package(openPMD REQUIRED)
-find_package(openPMDraytrace REQUIRED)
+find_package(openPMDraytrace 0.1.0 REQUIRED)
 
 
 # add_library(component SHARED src/openPMD_io.cc src/particles.cc)
