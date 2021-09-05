@@ -50,7 +50,7 @@ endif()
 
 
 #########################################################
-find_package(openPMD REQUIRED)
+#find_package(openPMD REQUIRED) #this give error since find_package is used in the openPMDraytrace.cmake file
 find_package(openPMDraytrace 0.1.0 REQUIRED)
 
 
@@ -65,7 +65,7 @@ find_package(openPMDraytrace 0.1.0 REQUIRED)
 add_library(wrap SHARED src/wrap.cc)
 target_include_directories(wrap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 #target_link_libraries(wrap PRIVATE component)
-target_link_libraries(wrap PRIVATE raytrace) # openPMD::openPMD)
+target_link_libraries(wrap PUBLIC openPMD::openPMDraytrace)
 #set_property(TARGET wrap PROPERTY CXX_STANDARD 17)
 
 if(TEST)
@@ -142,7 +142,7 @@ if (DOXYGEN_FOUND)
   message("Doxygen build started")
   
   # note the option ALL which allows to build the docs together with the application
-  add_custom_target( doc 
+  add_custom_target(openPMDoutput_doc 
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen"
