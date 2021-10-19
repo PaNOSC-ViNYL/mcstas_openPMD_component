@@ -1,31 +1,5 @@
 # Description
 This package provies a McStas component for reading and writing neutrons from/to a file on disk.
-
-# To do
- * [X] complete the writing
- * [X] implement the reading
- * [ ] add possibility to decide the file format (now hardcoded as HDF5)
- * [ ] neutrons are saved in chunks, the chunk size is hardcoded
-   - to be optimized
-   - to be made configurable by the user
- * [ ] define the openPMD extension
- * [ ] conform to the extension:
-   - `https://github.com/DavidSagan/openPMD-standard/blob/EXT_BeamPhysics/EXT_BeamPhysics.md`
- * [X] add licence file: GPLv2
- * [ ] add authors and commented header in all files
- * [ ] put on github
- * [ ] make it compatible with MPI
-   - [X] install MPICH: instructions for setting environment modules added to the README
-   - [ ] add compilation with mpicc and execution tests with mpirun
-   - [ ] read the openPMD-api documentation about MPI
-   - [ ] output of different MPI nodes as separate "iterations" in openPMD (maybe it does not need merging)
- * [X] Implement the repeat_count functionality of MCPL
- * [ ] Implement the energy/position/velocity smearing capability
- * [ ] Make comparison with MCPL
-   * [X] Disk space
-   * [ ] Speed: it should be a bit faster because there is not GZIP compression
- * [ ] Make it possible to select MCPL or openPMD in the Test_CppWrap.instr from the command line
- * [ ] Test compilation with mcrun and the way McStas users would do
  
 # Comparison of openPMD vs MCPL
 ## Output (save)
@@ -41,7 +15,8 @@ This package provies a McStas component for reading and writing neutrons from/to
  - cmake 3.11.2
  - openPMD C++ API
  - hdf5-mpi
- 
+ - mcstas-2.7 --> does not work with mcstas-3.0
+ - mcstas-comps-2.7
 ### CENTOS 8
 The CMake version needed for openPMD api, with the options reported in the following instructions, is less stringent than what is marked in the CMakeLists.txt and it is above the version available on CENTOS 8. So a patch is needed:
 ```
@@ -87,9 +62,8 @@ The openPMD API is compiled from source.
 #!/bin/bash
 mkdir build/
 cd build/
-cmake .. -DopenPMD_USE_PYTHON=OFF -DopenPMD_INSTALL=OFF -DopenPMD_USE_INTERNAL_CATCH=ON -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_CLI_TOOLS=OFF
-#set -x LD_LIBRARY_PATH $PWD/build/lib/
-cmake --build .
+make -S . -B /dev/shm/openpmd_output/ -DCMAKE_PREFIX_PATH=/tmp/devel/ -DCMAKE_INSTALL_PREFIX=/tmp/devel -DTEST=ON
+cmake --build /dev/shm/openpmd_output/
 ```
 
 
@@ -105,3 +79,30 @@ ctest --verbose
  - `src/`              : contains the implementation of the C wrapper, the definition and implementation of the C++ library that uses the openPMD API and auxiliary classes
 
 Check the wrap.h and wrap.cc dependency graph for more information.
+
+
+# To do
+ * [X] complete the writing
+ * [X] implement the reading
+ * [X] add possibility to decide the file format (now hardcoded as HDF5)
+ * [ ] neutrons are saved in chunks, the chunk size is hardcoded
+   - to be optimized
+   - to be made configurable by the user
+ * [X] define the openPMD extension
+ * [X] conform to the extension:
+   - `https://github.com/DavidSagan/openPMD-standard/blob/EXT_BeamPhysics/EXT_BeamPhysics.md`
+ * [X] add licence file: GPLv2
+ * [ ] add authors and commented header in all files
+ * [X] put on github
+ * [ ] make it compatible with MPI
+   - [X] install MPICH: instructions for setting environment modules added to the README
+   - [ ] add compilation with mpicc and execution tests with mpirun
+   - [ ] read the openPMD-api documentation about MPI
+   - [ ] output of different MPI nodes as separate "iterations" in openPMD (maybe it does not need merging)
+ * [X] Implement the repeat_count functionality of MCPL
+ * [ ] Implement the energy/position/velocity smearing capability
+ * [ ] Make comparison with MCPL
+   * [X] Disk space
+   * [ ] Speed: it should be a bit faster because there is not GZIP compression
+ * [ ] Make it possible to select MCPL or openPMD in the Test_CppWrap.instr from the command line
+ * [ ] Test compilation with mcrun and the way McStas users would do

@@ -53,7 +53,7 @@ COMPONENT prop = Slit(xwidth=1.0, yheight=1.0)
 AT (0, 0, 1.0) RELATIVE source
 
 //outfile defaults to the current component name
-COMPONENT openPMD_out = write_openPMD(filename=filename, useHDF=1)
+COMPONENT openPMD_out = write_openPMD(filename=filename)
 AT (0, 0, 0) RELATIVE ABSOLUTE
 
 COMPONENT mcpl_out = MCPL_output(filename="mcpl_output.mcpl", merge_mpi=0, keep_mpi_unmerged=1)

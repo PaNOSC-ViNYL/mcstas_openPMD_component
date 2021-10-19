@@ -71,7 +71,7 @@ INITIALIZE
 
   // the file format could be deduced from the file extension
   // op, output format, , max number of neutrons
-  unsigned long long int nparticles = init_read(op,  mcget_ncount(), mpi_node_rank, repeat_count);  /* JSON or HDF5: enum*/
+  unsigned long long int nparticles = init_read(op, 0, mpi_node_rank, repeat_count);  /* JSON or HDF5: enum*/
   if(nparticles<mcget_ncount()){
 	  printf("[WARNING] Number of particles in file %s < than requested: %llu < %llu\n",
 		 filename,

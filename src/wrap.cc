@@ -17,13 +17,19 @@ public:
 	void
 	set_velocity(double x, double y, double z) {
 		double abs_v = sqrt(x * x + y * y + z * z);
-		set_direction(x, y, z, 1. / abs_v);
+		x/=abs_v;
+		y/=abs_v;
+		z/=abs_v;
+		set_direction(x, y, z);
 		set_wavelength(V2W/abs_v);
 	}
 	void
 	get_velocity(double* x, double* y, double* z) {
 		double abs_v = V2W / get_wavelength();
-		get_direction(x, y, z, abs_v);
+		get_direction(x, y, z);
+		*x *= abs_v;
+		*y *= abs_v;
+		*z *= abs_v;
 	}
 };
 
@@ -33,13 +39,19 @@ extern "C" {
 
 openPMD_io*
 openPMD_create(const char* filename, const char* mc_code_name, const char* mc_code_version,
-              const char* instrument_name, const char* name_current_component, int mpi_node_rank) {
-	if(mpi_node_rank==1){
-		raytracing::openPMD_io* io = new raytracing::openPMD_io(filename, mc_code_name, mc_code_version,
-		                                  instrument_name, name_current_component);
+               const char* instrument_name, const char* name_current_component, int mpi_node_rank) {
+	std::cout << "MPI node rank: " << mpi_node_rank << std::endl;
+	if (mpi_node_rank == 1 or mpi_node_rank == 0) {
+		raytracing::openPMD_io* io =
+		        new raytracing::openPMD_io(filename, mc_code_name, mc_code_version,
+		                                   instrument_name, name_current_component);
 		return io;
+	} else {
+		std::cout << "[ERROR] Create for MPI node rank >1 not implemented" << std::endl;
+		return nullptr;
+		// return openPMD_append(filename);
 	}
-	//	else return openPMD_append(filename);
+	return nullptr;
 }
         /*
 openPMD_io*
@@ -57,7 +69,7 @@ openPMD_append(const char* name) {
 void
 init_write(openPMD_io* op,// enum openPMD_output_format_t extension,
            unsigned long long int n_neutrons, unsigned int iter) {
-	op->init_write("2112", n_neutrons, raytracing::AUTO, iter);
+	op->init_write("2112", n_neutrons,  iter);
 }
 
 unsigned long long int

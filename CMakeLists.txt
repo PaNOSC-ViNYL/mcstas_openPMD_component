@@ -2,7 +2,9 @@
 # cmake .. -DopenPMD_USE_PYTHON=OFF -DopenPMD_INSTALL=OFF -DopenPMD_USE_INTERNAL_CATCH=ON -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_CLI_TOOLS=OFF
 cmake_minimum_required(VERSION 3.20.2)
 
-project(openpmd_output LANGUAGES CXX C)
+project(openpmd_output
+  VERSION 0.1.0
+  LANGUAGES C CXX)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -13,23 +15,6 @@ endif()
 
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 
-# Options and Variants ########################################################
-#
-function(openpmd_option name description default)
-    set(openPMD_USE_${name} ${default} CACHE STRING "${description}")
-    set_property(CACHE openPMD_USE_${name} PROPERTY
-        STRINGS "ON;TRUE;AUTO;OFF;FALSE"
-    )
-    if(openPMD_HAVE_${name})
-        set(openPMD_HAVE_${name} TRUE)
-    else()
-        set(openPMD_HAVE_${name})
-    endif()
-    # list of all possible options
-    set(openPMD_CONFIG_OPTIONS ${openPMD_CONFIG_OPTIONS} ${name} PARENT_SCOPE)
-endfunction()
-
-##
 option(TEST "Do testing" OFF)
 
 ##
@@ -50,33 +35,30 @@ endif()
 
 
 #########################################################
-#find_package(openPMD REQUIRED) #this give error since find_package is used in the openPMDraytrace.cmake file
-find_package(openPMDraytrace 0.1.0 REQUIRED)
-
-
-# add_library(component SHARED src/openPMD_io.cc src/particles.cc)
-# set_target_properties(component
-#   PROPERTIES LINKER_LANGUAGE CXX
-#   )
-# target_include_directories(component PUBLIC include/)
-# set_property(TARGET component PROPERTY CXX_STANDARD 17)
-# target_link_libraries(component PUBLIC openPMD::openPMD)
+find_package(openPMDraytrace REQUIRED)
 
 add_library(wrap SHARED src/wrap.cc)
 target_include_directories(wrap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-#target_link_libraries(wrap PRIVATE component)
+#set_target_properties(wrap
+#  PROPERTIES LINKER_LANGUAGE CXX 
+#   )
 target_link_libraries(wrap PUBLIC openPMD::openPMDraytrace)
 #set_property(TARGET wrap PROPERTY CXX_STANDARD 17)
 
 if(TEST)
+  if(NOT DEFINED ENV{MCSTAS})
+    message(FATAL_ERROR "MCSTAS environment not defined")
+  else()
+    set(MCSTAS $ENV{MCSTAS} CACHE PATH "Path of the mcstas installation [MANDATORY]")
+  endif()
   
-add_custom_command(OUTPUT Test_write_openPMD.c
-  DEPENDS mcstas_component/Test_write_openPMD.instr
-  DEPENDS mcstas_component/write_openPMD.comp
-  COMMENT "creation of Test_write_openPMD.c"
-  COMMAND mcstas -t -o ${CMAKE_BINARY_DIR}/Test_write_openPMD.c ${CMAKE_CURRENT_SOURCE_DIR}/mcstas_component/Test_write_openPMD.instr -Imcstas_component/
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  )
+  add_custom_command(OUTPUT Test_write_openPMD.c
+    DEPENDS mcstas_component/Test_write_openPMD.instr
+    DEPENDS mcstas_component/write_openPMD.comp
+    COMMENT "creation of Test_write_openPMD.c"
+    COMMAND mcstas -t -o ${CMAKE_BINARY_DIR}/Test_write_openPMD.c ${CMAKE_CURRENT_SOURCE_DIR}/mcstas_component/Test_write_openPMD.instr -Imcstas_component/
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
 
 add_custom_command(OUTPUT Test_read_openPMD.c
   DEPENDS mcstas_component/Test_read_openPMD.instr
@@ -110,18 +92,24 @@ target_link_libraries(Test_read_openPMD.out PRIVATE wrap)
 target_link_libraries(Test_read_openPMD.out PRIVATE m)
 
 enable_testing()
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test)
 add_test(NAME short COMMAND
   ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
-  ${MPIEXEC_PREFLAGS} ${CMAKE_BINARY_DIR}/bin/Test_write_openPMD.out ${MPIEXEC_POSTFLAGS}  -n 100 -s 654321 filename=openPMD_out.h5 
+  ${MPIEXEC_PREFLAGS} ${CMAKE_BINARY_DIR}/Test_write_openPMD.out ${MPIEXEC_POSTFLAGS}  -n 100 -s 654321 filename=openPMD_out.h5 
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
-add_test(NAME mid COMMAND ${MPIEXEC_EXECUTABLE} Test_write_openPMD.out -n 1e6  -s 654321  filename=openPMD_out.h5
+add_test(NAME shortJSON COMMAND
+  ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS}
+  ${MPIEXEC_PREFLAGS} ${CMAKE_BINARY_DIR}/Test_write_openPMD.out ${MPIEXEC_POSTFLAGS}  -n 100 -s 654321 filename=openPMD_out.json
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
-add_test(NAME long COMMAND ${MPIEXEC_EXECUTABLE} Test_write_openPMD.out -n 1e7  -s 654321 filename=openPMD_out.h5
+add_test(NAME mid COMMAND ${MPIEXEC_EXECUTABLE} Test_write_openPMD.out -n 1e5  -s 654321  filename=openPMD_out.h5
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
-add_test(NAME read COMMAND Test_read_openPMD.out filename=openPMD_out.h5 verbose=1
+#add_test(NAME long COMMAND ${MPIEXEC_EXECUTABLE} Test_write_openPMD.out -n 1e7  -s 654321 filename=openPMD_out.h5
+#  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
+
+add_test(NAME read COMMAND Test_read_openPMD.out -n 1e4 filename=openPMD_out.h5 verbose=1
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test/)
 
 add_test(NAME read_repeat COMMAND Test_read_openPMD.out filename=openPMD_out.h5 verbose=1 repeat_count=3
